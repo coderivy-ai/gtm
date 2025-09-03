@@ -156,13 +156,89 @@
     })
   }
 
+  // Função para criar container automaticamente
+  function createContainerAutomatically(component) {
+    // Seletores padrão para encontrar elementos existentes no site
+    const defaultSelectors = [
+      'section[aria-label="slider"]', // VTEX slider
+      '.vtex-slider-layout-0-x-sliderLayoutContainer', // VTEX slider container
+      '[data-testid="slider-track"]', // VTEX slider track
+      '.shelf', // Shelf genérico
+      '.product-shelf', // Product shelf genérico
+      '.product-carousel', // Product carousel genérico
+      '.recommended-products', // Recommended products genérico
+      '.related-products' // Related products genérico
+    ]
+    
+    // Usar seletores personalizados se fornecidos
+    const customSelectors = component.props.targetSelectors || []
+    const selectors = customSelectors.length > 0 ? customSelectors : defaultSelectors
+    
+    let targetElement = null
+    
+    // Procurar por elementos existentes
+    for (const selector of selectors) {
+      const element = document.querySelector(selector)
+      if (element) {
+        targetElement = element
+        console.log(`Found target element: ${selector}`)
+        break
+      }
+    }
+    
+    if (!targetElement) {
+      console.warn('No suitable target element found. Creating container in body.')
+      targetElement = document.body
+    }
+    
+    // Criar container
+    const container = document.createElement('div')
+    container.id = 'product-showcase-container'
+    
+    // Estilos personalizados se fornecidos
+    const customStyles = component.props.containerStyles || `
+      margin: 20px 0;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    `
+    
+    container.style.cssText = customStyles
+    
+    // Posição personalizada se fornecida
+    const position = component.props.containerPosition || 'after' // 'after', 'before', 'inside'
+    
+    if (position === 'inside' && targetElement) {
+      targetElement.appendChild(container)
+      console.log('Container created inside target element')
+    } else if (position === 'before' && targetElement && targetElement.parentNode) {
+      targetElement.parentNode.insertBefore(container, targetElement)
+      console.log('Container created before target element')
+    } else if (targetElement && targetElement.parentNode) {
+      targetElement.parentNode.insertBefore(container, targetElement.nextSibling)
+      console.log('Container created after target element')
+    } else {
+      document.body.appendChild(container)
+      console.log('Container created in body')
+    }
+    
+    return container
+  }
+
   function initializeCoderShelf() {
     try {
       const config = window.coderShelfConfig || defaultConfig
       
       config.components.forEach(component => {
         if (component.enabled && component.type === 'showcase') {
-          const container = document.querySelector(component.selector)
+          let container = document.querySelector(component.selector)
+          
+          // Se container não existe, criar automaticamente
+          if (!container) {
+            console.log('Container not found, creating automatically...')
+            container = createContainerAutomatically(component)
+          }
           
           if (container) {
             const html = createProductShowcaseHTML(component.props)
@@ -179,7 +255,7 @@
             
             console.log('ProductShowcase initialized successfully')
           } else {
-            console.warn(`Container not found: ${component.selector}`)
+            console.warn('Failed to create container')
           }
         }
       })
