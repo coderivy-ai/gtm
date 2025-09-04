@@ -8,7 +8,7 @@
     return
   }
 
-  const defaultConfig = {
+  var defaultConfig = {
     clientId: 'test-client',
     components: [
       {
@@ -24,7 +24,7 @@
     ]
   }
 
-  const mockProducts = [
+  var mockProducts = [
     {
       id: '1',
       name: 'Tênis Esportivo Premium',
@@ -59,14 +59,14 @@
   ]
 
   function createProductShowcaseHTML(config) {
-    const products = mockProducts.slice(0, config.maxResults || 8)
+    var products = mockProducts.slice(0, config.maxResults || 8)
     
     return `
       <div class="coder-shelf-gtm" style="max-width: 1200px; margin: 0 auto; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
         <h2 style="font-size: 28px; font-weight: 600; color: #1a1a1a; margin: 0 0 24px 0; text-align: center;">${config.title || 'Produtos Recomendados'}</h2>
         
         <div class="showcase-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 32px;">
-          ${products.map(product => `
+          ${products.map(function(product) { return `
             <div class="product-card" style="background: #ffffff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); overflow: hidden; transition: all 0.3s ease; cursor: pointer; position: relative; height: 400px; display: flex; flex-direction: column;" data-product-id="${product.id}">
               
               <div class="product-image-container" style="position: relative; width: 100%; height: 60%; overflow: hidden; background: #f8f9fa;">
@@ -105,7 +105,7 @@
                 </div>
               </div>
             </div>
-          `).join('')}
+          `; }).join('')}
         </div>
       </div>
     `
@@ -137,10 +137,10 @@
       }
     })
     
-    const productCards = container.querySelectorAll('.product-card')
-    productCards.forEach((card, index) => {
-      const productId = card.getAttribute('data-product-id')
-      const product = mockProducts.find(p => p.id === productId)
+    var productCards = container.querySelectorAll('.product-card')
+    productCards.forEach(function(card, index) {
+      var productId = card.getAttribute('data-product-id')
+      var product = mockProducts.find(function(p) { return p.id === productId; })
       
       if (product) {
         window.dataLayer = window.dataLayer || []
@@ -159,7 +159,7 @@
   // Função para criar container automaticamente
   function createContainerAutomatically(component) {
     // Seletores padrão para encontrar elementos existentes no site
-    const defaultSelectors = [
+    var defaultSelectors = [
       'section[aria-label="slider"]', // VTEX slider
       '.vtex-slider-layout-0-x-sliderLayoutContainer', // VTEX slider container
       '[data-testid="slider-track"]', // VTEX slider track
@@ -171,14 +171,15 @@
     ]
     
     // Usar seletores personalizados se fornecidos
-    const customSelectors = component.props.targetSelectors || []
-    const selectors = customSelectors.length > 0 ? customSelectors : defaultSelectors
+    var customSelectors = component.props.targetSelectors || []
+    var selectors = customSelectors.length > 0 ? customSelectors : defaultSelectors
     
-    let targetElement = null
+    var targetElement = null
     
     // Procurar por elementos existentes
-    for (const selector of selectors) {
-      const element = document.querySelector(selector)
+    for (var i = 0; i < selectors.length; i++) {
+      var selector = selectors[i]
+      var element = document.querySelector(selector)
       if (element) {
         targetElement = element
         console.log(`Found target element: ${selector}`)
@@ -192,11 +193,11 @@
     }
     
     // Criar container
-    const container = document.createElement('div')
+    var container = document.createElement('div')
     container.id = 'product-showcase-container'
     
     // Estilos personalizados se fornecidos
-    const customStyles = component.props.containerStyles || `
+    var customStyles = component.props.containerStyles || `
       margin: 20px 0;
       padding: 20px;
       background: #fff;
@@ -207,7 +208,7 @@
     container.style.cssText = customStyles
     
     // Posição personalizada se fornecida
-    const position = component.props.containerPosition || 'after' // 'after', 'before', 'inside'
+    var position = component.props.containerPosition || 'after' // 'after', 'before', 'inside'
     
     if (position === 'inside' && targetElement) {
       targetElement.appendChild(container)
@@ -228,11 +229,11 @@
 
   function initializeCoderShelf() {
     try {
-      const config = window.coderShelfConfig || defaultConfig
+      var config = window.coderShelfConfig || defaultConfig
       
-      config.components.forEach(component => {
+      config.components.forEach(function(component) {
         if (component.enabled && component.type === 'showcase') {
-          let container = document.querySelector(component.selector)
+          var container = document.querySelector(component.selector)
           
           // Se container não existe, criar automaticamente
           if (!container) {
@@ -241,7 +242,7 @@
           }
           
           if (container) {
-            const html = createProductShowcaseHTML(component.props)
+            var html = createProductShowcaseHTML(component.props)
             container.innerHTML = html
             
             addEventListeners(container)
