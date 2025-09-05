@@ -58,7 +58,7 @@
     }
   ]
 
-  function createProductShowcaseHTML(config) {
+  function createShelfHTML(config) {
     var products = mockProducts.slice(0, config.maxResults || 8)
     
     return `
@@ -242,7 +242,7 @@
           }
           
           if (container) {
-            var html = createProductShowcaseHTML(component.props)
+            var html = createShelfHTML(component.props)
             container.innerHTML = html
             
             addEventListeners(container)
@@ -254,7 +254,7 @@
               items_count: mockProducts.length
             })
             
-            console.log('ProductShowcase initialized successfully')
+            console.log('Shelf initialized successfully')
           } else {
             console.warn('Failed to create container')
           }
