@@ -120,14 +120,24 @@ var __async = (__this, __arguments, generator) => {
     function loadDependencies() {
       return __async(this, null, function* () {
         if (window.React && window.ReactDOM) {
+          console.log("React dependencies already loaded");
           return;
         }
+        console.log("Loading React dependencies...");
         if (!window.React) {
+          console.log("Loading React...");
           yield loadScript("https://unpkg.com/react@18/umd/react.production.min.js");
+          yield new Promise((resolve) => setTimeout(resolve, 100));
         }
         if (!window.ReactDOM) {
+          console.log("Loading ReactDOM...");
           yield loadScript("https://unpkg.com/react-dom@18/umd/react-dom.production.min.js");
+          yield new Promise((resolve) => setTimeout(resolve, 100));
         }
+        if (!window.React || !window.ReactDOM) {
+          throw new Error("Failed to load React dependencies");
+        }
+        console.log("React dependencies loaded successfully");
       });
     }
     function loadScript(src) {
