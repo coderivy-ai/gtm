@@ -45,43 +45,14 @@ var __async = (__this, __arguments, generator) => {
       console.log("⚠️ ComponentInjector já existe");
       return;
     }
-    if (!window.React || !window.ReactDOM) {
-      console.log("❌ React não disponível, carregando...");
-      loadReact().then(() => {
-        console.log("✅ React carregado, inicializando...");
-        initializeComponentInjector();
-      }).catch((error) => {
-        console.error("❌ Erro ao carregar React:", error);
-      });
-    } else {
-      console.log("✅ React já disponível, inicializando...");
-      initializeComponentInjector();
+    console.log("✅ React incluído no bundle, inicializando...");
+    if (typeof window.React === "undefined" || typeof window.ReactDOM === "undefined") {
+      console.error("❌ React não está disponível globalmente");
+      return;
     }
-    function loadReact() {
-      return new Promise((resolve, reject) => {
-        const script = document.createElement("script");
-        script.src = "https://unpkg.com/react@18/umd/react.production.min.js";
-        script.onload = () => {
-          console.log("✅ React carregado");
-          const scriptDOM = document.createElement("script");
-          scriptDOM.src = "https://unpkg.com/react-dom@18/umd/react-dom.production.min.js";
-          scriptDOM.onload = () => {
-            console.log("✅ ReactDOM carregado");
-            resolve();
-          };
-          scriptDOM.onerror = reject;
-          document.head.appendChild(scriptDOM);
-        };
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
-    }
+    initializeComponentInjector();
     function initializeComponentInjector() {
       console.log("🔧 Inicializando ComponentInjector...");
-      if (!window.React || !window.ReactDOM) {
-        console.error("❌ React ainda não disponível");
-        return;
-      }
       window.ComponentInjector = {
         load: function() {
           console.log("📦 Carregando componentes...");
