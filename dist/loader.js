@@ -125,7 +125,7 @@ var __async = (__this, __arguments, generator) => {
       });
     }
     function renderProducts(container, apiData, config) {
-      var _a, _b, _c, _d, _e, _f;
+      var _a;
       const products = apiData.products || [];
       if (products.length === 0) {
         container.querySelector(".shelf-content").innerHTML = `
@@ -133,81 +133,132 @@ var __async = (__this, __arguments, generator) => {
       `;
         return;
       }
-      const gridColumns = ((_c = (_b = (_a = config.props) == null ? void 0 : _a.grid) == null ? void 0 : _b.desktop) == null ? void 0 : _c.columns) || 4;
-      const gridSpacing = ((_f = (_e = (_d = config.props) == null ? void 0 : _d.grid) == null ? void 0 : _e.desktop) == null ? void 0 : _f.spacing) || 24;
-      container.querySelector(".shelf-content").innerHTML = `
-      <div class="products-grid" style="
-        display: grid;
-        grid-template-columns: repeat(${gridColumns}, 1fr);
-        gap: ${gridSpacing}px;
-        margin-top: 20px;
-      ">
-        ${products.map((product, index) => {
-        var _a2, _b2, _c2, _d2, _e2, _f2, _g, _h;
-        return `
-          <div class="product-card" style="
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 16px;
-            text-align: center;
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-            cursor: pointer;
-          " onclick="handleProductClick('${product.productId}', '${product.productName}', ${((_b2 = (_a2 = product.priceRange) == null ? void 0 : _a2.sellingPrice) == null ? void 0 : _b2.lowPrice) || 0})">
-            <div class="product-image" style="
-              width: 100%;
-              height: 200px;
-              background: #f8f9fa;
-              border-radius: 4px;
-              margin-bottom: 12px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-size: 14px;
-              color: #666;
-            ">
-              ${((_d2 = (_c2 = product.images) == null ? void 0 : _c2[0]) == null ? void 0 : _d2.imageUrl) ? `<img src="${product.images[0].imageUrl}" alt="${product.productName}" style="max-width: 100%; max-height: 100%; object-fit: cover;">` : "Sem imagem"}
+      const isMobile = window.innerWidth <= 768;
+      const template = isMobile ? getMobileTemplate() : getDesktopTemplate();
+      const productsHTML = products.map((product, index) => {
+        return renderProductCard(product);
+      }).join("");
+      const shelfHTML = template.replace("{{TITLE}}", ((_a = config.props) == null ? void 0 : _a.title) || "Produtos Recomendados").replace("{{PRODUCTS}}", productsHTML);
+      container.querySelector(".shelf-content").innerHTML = shelfHTML;
+    }
+    function getDesktopTemplate() {
+      return `
+      <div class="flex flex-col my-4 w-full lg:flex-row lg:justify-center new-release bg-mainBg">
+        <div class="flex flex-col items-start w-full lg:max-w-[1330px] px-2 relative">
+          <h2 class="w-full text-lg lg:text-2xl uppercase mb-4 pb-4 border-b">
+            {{TITLE}}
+          </h2>
+          <div class="swiffy-slider slider-nav-dark slider-nav-visible slider-nav-autoplay slider-nav-autopause slider-indicators-round slider-indicators-dark slider-indicators-highlight slider-indicators-sm slider-item-show4 slider-item-show2-sm slider-item-snapstart" data-slider-nav-autoplay-interval="5000">
+            <div class="slider-container">
+              {{PRODUCTS}}
             </div>
-            <h3 class="product-name" style="
-              font-size: 16px;
-              font-weight: 600;
-              margin: 0 0 8px 0;
-              color: #333;
-              line-height: 1.3;
-            ">${product.productName}</h3>
-            <div class="product-price" style="
-              font-size: 18px;
-              font-weight: bold;
-              color: #2c5aa0;
-              margin-bottom: 12px;
-            ">R$ ${(((_f2 = (_e2 = product.priceRange) == null ? void 0 : _e2.sellingPrice) == null ? void 0 : _f2.lowPrice) || 0).toFixed(2)}</div>
-            <button class="add-to-cart-btn" style="
-              width: 100%;
-              padding: 8px 16px;
-              background: #2c5aa0;
-              color: white;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-              font-size: 14px;
-              font-weight: 500;
-            " onclick="event.stopPropagation(); handleAddToCart('${product.productId}', '${product.productName}', ${((_h = (_g = product.priceRange) == null ? void 0 : _g.sellingPrice) == null ? void 0 : _h.lowPrice) || 0})">
-              Adicionar ao Carrinho
-            </button>
+            <div>
+              <div class="absolute bg-inherit shadow-none rounded-none outline-none p-0 z-10 text-4xl left-auto -top-12 right-16">
+                <button type="button" class="slider-nav">
+                  <img src="https://coderivy.fbitsstatic.net/sf/img/icons/arrow-left.svg?theme=main&v=202509081621" alt="arrow-left" class="w-6 h-6 m-2" />
+                </button>
+              </div>
+              <div class="absolute bg-inherit shadow-none rounded-none outline-none p-0 z-10 text-4xl left-auto -top-12 right-0">
+                <button type="button" class="slider-nav slider-nav-next">
+                  <img src="https://coderivy.fbitsstatic.net/sf/img/icons/arrow-right.svg?theme=main&v=202509081621" alt="arrow-right" class="w-6 h-6 m-2" />
+                </button>
+              </div>
+            </div>
           </div>
-        `;
-      }).join("")}
+        </div>
       </div>
     `;
-      const style = document.createElement("style");
-      style.textContent = `
-      .product-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-      }
+    }
+    function getMobileTemplate() {
+      return `
+      <div class="flex flex-col my-4 w-full lg:flex-row lg:justify-center new-release bg-mainBg">
+        <div class="flex flex-col items-start w-full lg:max-w-[1330px] px-2 relative">
+          <h2 class="w-full text-lg lg:text-2xl uppercase mb-4 pb-4 border-b">
+            {{TITLE}}
+          </h2>
+          <div class="swiffy-slider slider-nav-dark slider-nav-visible slider-nav-autoplay slider-nav-autopause slider-indicators-round slider-indicators-dark slider-indicators-highlight slider-indicators-sm slider-item-show4 slider-item-show2-sm slider-item-snapstart" data-slider-nav-autoplay-interval="5000">
+            <div class="slider-container">
+              {{PRODUCTS}}
+            </div>
+            <div>
+              <div class="absolute bg-inherit shadow-none rounded-none outline-none p-0 z-10 text-4xl left-auto -top-12 right-16">
+                <button type="button" class="slider-nav">
+                  <img src="https://coderivy.fbitsstatic.net/sf/img/icons/arrow-left.svg?theme=main&v=202509081621" alt="arrow-left" class="w-6 h-6 m-2" />
+                </button>
+              </div>
+              <div class="absolute bg-inherit shadow-none rounded-none outline-none p-0 z-10 text-4xl left-auto -top-12 right-0">
+                <button type="button" class="slider-nav slider-nav-next">
+                  <img src="https://coderivy.fbitsstatic.net/sf/img/icons/arrow-right.svg?theme=main&v=202509081621" alt="arrow-right" class="w-6 h-6 m-2" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     `;
-      document.head.appendChild(style);
+    }
+    function renderProductCard(product, index, isMobile) {
+      var _a, _b;
+      const discount = product.listPrice > product.price ? Math.round((product.listPrice - product.price) / product.listPrice * 100) : 0;
+      return `
+      <div class="flex flex-col justify-center items-center hover:shadow-xl p-2 mr-2 mb-1 lg:mr-7 lg:last:mr-0 group">
+        <div class="flex flex-col relative justify-start items-center lg:w-60 w-full min-h-[530px]">
+          <div spot-container="" class="flex justify-center w-full max-h-auto box-content group">
+            <a href="/produto/${product.productId}">
+              <img src="${product.image}" alt="Product image" class="w-full group-hover:hidden" fetchpriority="high" width="640" height="360" />
+              <img src="${((_b = (_a = product.images) == null ? void 0 : _a[1]) == null ? void 0 : _b.imageUrl) || product.image}" alt="Product image" class="group-hover:flex hidden" fetchpriority="high" width="640" height="360" />
+            </a>
+          </div>
+          <div class="flex justify-start items-center w-full"></div>
+          <div class="flex flex-col justify-between h-full">
+            <div class="flex flex-col">
+              <a href="/produto/${product.productId}">
+                <span class="text-xl my-2 text-[#1E1E1E]">${product.productName}</span>
+              </a>
+              <div class="stamps d-flex row"></div>
+              <div class="text-xl">
+                ${product.listPrice > product.price ? `<p class="text-base text-[#1E1E1E]"><s>R$ ${product.listPrice.toFixed(2)}</s></p>` : ""}
+                <h2><b>R$ ${product.price.toFixed(2)}</b></h2>
+              </div>
+              <div>
+                <p>ou <b>em 0x de R$ 0,00 com juros</b></p>
+              </div>
+              ${discount > 0 ? `
+                <div class="absolute top-1 left-1 py-1 px-2 rounded-full text-white shadow-xl bg-primary-700 origin-top-right">
+                  - ${discount}%
+                </div>
+              ` : ""}
+            </div>
+            <div class="flex justify-end">
+              <div class="flex justify-between items-center w-full my-3 py-3 lg:group-hover:translate-y-5 lg:translate-y-0 lg:opacity-0 lg:invisible lg:group-hover:opacity-100 lg:group-hover:visible lg:duration-500 lg:ease-in-out lg:group-hover:transform">
+                <div class="flex flex-col lg:flex-row justify-between items-center w-full">
+                  <button add-to-cart-button="" type="button" class="flex items-center justify-center w-full lg:w-2/4 p-2 text-white bg-primary-500 lg:hover:bg-primary-600" value="" onclick="spotAddToCartButtonClick(${product.productId})">
+                    <img src="https://coderivy.fbitsstatic.net/sf/img/icons/plus.svg?theme=main&v=202509081621" alt="Add to cart" class="w-6 h-6 mr-2 stroke-white" />
+                    Adicionar
+                  </button>
+                  <button buy-button="" type="button" class="flex items-center justify-center w-full lg:w-2/4 p-2 text-white bg-gray-1000 lg:bg-secondary-500 lg:hover:bg-gray-1000" value="" onclick="spotBuyButtonClick(${product.productId})">
+                    <img src="https://coderivy.fbitsstatic.net/sf/img/icons/cart.svg?theme=main&v=202509081621" alt="Buy button" class="w-6 h-6 mr-2" />
+                    COMPRAR
+                  </button>
+                </div>
+              </div>
+              <div class="absolute top-1 right-1">
+                <button type="button" id="wishlist-button-${product.productId}" aria-label="Add to wishlist" alt="wishlist" onclick='wishlistAddClick(this,"${product.productId}")'>
+                  <svg class="w-6 h-6" id="wishlist-icon-${product.productId}" width="24" height="24" viewBox="0 0 23 20" fill="none" stroke="black" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3.12825 3.05745C2.67628 3.50942 2.31775 4.04599 2.07314 4.63652C1.82853 5.22705 1.70264 5.85997 1.70264 6.49916C1.70264 7.13834 1.82853 7.77127 2.07314 8.3618C2.31775 8.95233 2.67628 9.4889 3.12825 9.94087L11.4372 18.2499L19.7462 9.94087C20.659 9.02807 21.1718 7.79005 21.1718 6.49916C21.1718 5.20827 20.659 3.97025 19.7462 3.05745C18.8334 2.14465 17.5954 1.63185 16.3045 1.63185C15.0136 1.63185 13.7756 2.14465 12.8628 3.05745L11.4372 4.48302L10.0117 3.05745C9.5597 2.60548 9.02313 2.24695 8.4326 2.00234C7.84207 1.75773 7.20915 1.63184 6.56996 1.63184C5.93078 1.63184 5.29785 1.75773 4.70732 2.00234C4.11679 2.24695 3.58022 2.60548 3.12825 3.05745Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal" id="add-to-cart-modal-${product.productId}" aria-labelledby="addToCartFromSpot" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-scrollable modal-xl modal-dialog-centered">
+            <div id="add-to-cart-modal-content-${product.productId}"></div>
+          </div>
+        </div>
+      </div>
+    `;
     }
     function generateBrowserId() {
       let browserId = localStorage.getItem("browserId");
