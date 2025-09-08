@@ -198,21 +198,24 @@ var __async = (__this, __arguments, generator) => {
     `;
     }
     function renderProductCard(product, index, isMobile) {
-      var _a, _b;
+      var _a, _b, _c, _d, _e, _f;
       const discount = product.listPrice > product.price ? Math.round((product.listPrice - product.price) / product.listPrice * 100) : 0;
+      const productSlug = product.productName ? `${product.productName.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "")}-${product.productId}` : product.productId;
+      const mainImage = ((_b = (_a = product.images) == null ? void 0 : _a[0]) == null ? void 0 : _b.imageUrl) || product.image;
+      const hoverImage = ((_d = (_c = product.images) == null ? void 0 : _c[1]) == null ? void 0 : _d.imageUrl) || ((_f = (_e = product.images) == null ? void 0 : _e[0]) == null ? void 0 : _f.imageUrl) || product.image;
       return `
       <div class="flex flex-col justify-center items-center hover:shadow-xl p-2 mr-2 mb-1 lg:mr-7 lg:last:mr-0 group">
         <div class="flex flex-col relative justify-start items-center lg:w-60 w-full min-h-[530px]">
           <div spot-container="" class="flex justify-center w-full max-h-auto box-content group">
-            <a href="/produto/${product.productId}">
-              <img src="${product.image}" alt="Product image" class="w-full group-hover:hidden" fetchpriority="high" width="640" height="360" />
-              <img src="${((_b = (_a = product.images) == null ? void 0 : _a[1]) == null ? void 0 : _b.imageUrl) || product.image}" alt="Product image" class="group-hover:flex hidden" fetchpriority="high" width="640" height="360" />
+            <a href="/produto/${productSlug}">
+              <img src="${mainImage}" alt="Product image" class="w-full group-hover:hidden" fetchpriority="high" width="640" height="360" />
+              <img src="${hoverImage}" alt="Product image" class="group-hover:flex hidden" fetchpriority="high" width="640" height="360" />
             </a>
           </div>
           <div class="flex justify-start items-center w-full"></div>
           <div class="flex flex-col justify-between h-full">
             <div class="flex flex-col">
-              <a href="/produto/${product.productId}">
+              <a href="/produto/${productSlug}">
                 <span class="text-xl my-2 text-[#1E1E1E]">${product.productName}</span>
               </a>
               <div class="stamps d-flex row"></div>
