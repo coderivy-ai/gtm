@@ -84,7 +84,18 @@ var __async = (__this, __arguments, generator) => {
       </style>
     `;
         if (config.props.containerPosition === "after") {
-          container.insertAdjacentElement("afterend", shelfElement);
+          const recommendationsElement = document.querySelector(".recommendations.bg-mainBg");
+          const newReleaseElement = document.querySelector(".new-release.bg-mainBg");
+          if (recommendationsElement) {
+            console.log("📍 Inserindo após recommendations");
+            recommendationsElement.insertAdjacentElement("afterend", shelfElement);
+          } else if (newReleaseElement) {
+            console.log("�� Inserindo após new-release");
+            newReleaseElement.insertAdjacentElement("afterend", shelfElement);
+          } else {
+            console.log("📍 Inserindo após container original");
+            container.insertAdjacentElement("afterend", shelfElement);
+          }
         } else {
           container.appendChild(shelfElement);
         }
