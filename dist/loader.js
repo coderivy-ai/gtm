@@ -70,7 +70,6 @@ var __async = (__this, __arguments, generator) => {
         shelfElement.className = "shelf-container";
         shelfElement.innerHTML = `
       <div style="padding: 20px; border: 2px solid #007bff; border-radius: 8px; margin: 20px 0;">
-        <h3 style="color: #007bff; margin-bottom: 20px;">${config.props.title || "Produtos Recomendados"}</h3>
         <div class="shelf-content" style="text-align: center; padding: 40px;">
           <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #007bff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;"></div>
           <p style="color: #666; font-size: 16px;">Carregando produtos...</p>
@@ -144,7 +143,11 @@ var __async = (__this, __arguments, generator) => {
       `;
         return;
       }
-      const isMobile = window.innerWidth <= 768;
+      const isMobile = window.innerWidth <= 768 || window.matchMedia("(max-width: 768px)").matches;
+      console.log("Detecção mobile:", {
+        windowWidth: window.innerWidth,
+        isMobile
+      });
       const template = isMobile ? getMobileTemplate() : getDesktopTemplate();
       const productsHTML = products.map((product, index) => {
         return renderProductCard(product);
