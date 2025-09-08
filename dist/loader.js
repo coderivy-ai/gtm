@@ -40,518 +40,200 @@ var __async = (__this, __arguments, generator) => {
 (function(require$$0) {
   "use strict";
   (function() {
-    function generateBrowserId2() {
-      let browserId = localStorage.getItem("browserId");
-      if (!browserId) {
-        browserId = "browser_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
-        localStorage.setItem("browserId", browserId);
-      }
-      return browserId;
-    }
-    function generateCustomerDocument2() {
-      let customerDoc = localStorage.getItem("customerDocument");
-      if (!customerDoc) {
-        const randomNumbers = Math.floor(Math.random() * 9e8) + 1e8;
-        customerDoc = randomNumbers.toString();
-        localStorage.setItem("customerDocument", customerDoc);
-      }
-      return customerDoc;
-    }
+    console.log("🚀 Iniciando ComponentInjector...");
     if (window.ComponentInjector) {
-      console.log("ComponentInjector already loaded");
+      console.log("⚠️ ComponentInjector já existe");
       return;
     }
-    const defaultConfig = {
-      clientId: "default-client",
-      theme: "light",
-      position: "bottom-right",
-      components: [
-        {
-          id: "product-shelf",
-          type: "shelf",
-          selector: "body",
-          enabled: true,
-          props: {
-            title: "Produtos Recomendados",
-            maxItems: 12,
-            enablePagination: true,
-            enableWishlist: true,
-            enableRating: true,
-            targetSelectors: [
-              'section[aria-label="slider"]',
-              ".vtex-slider-layout-0-x-sliderLayoutContainer",
-              '[data-testid="slider-track"]',
-              ".shelf",
-              ".product-shelf",
-              ".product-carousel",
-              ".recommended-products",
-              ".related-products",
-              ".new-release"
-            ],
-            containerPosition: "after",
-            containerStyles: {
-              margin: "20px 0",
-              padding: "0 20px"
+    if (!window.React || !window.ReactDOM) {
+      console.log("❌ React não disponível, carregando...");
+      loadReact().then(() => {
+        console.log("✅ React carregado, inicializando...");
+        initializeComponentInjector();
+      }).catch((error) => {
+        console.error("❌ Erro ao carregar React:", error);
+      });
+    } else {
+      console.log("✅ React já disponível, inicializando...");
+      initializeComponentInjector();
+    }
+    function loadReact() {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://unpkg.com/react@18/umd/react.production.min.js";
+        script.onload = () => {
+          console.log("✅ React carregado");
+          const scriptDOM = document.createElement("script");
+          scriptDOM.src = "https://unpkg.com/react-dom@18/umd/react-dom.production.min.js";
+          scriptDOM.onload = () => {
+            console.log("✅ ReactDOM carregado");
+            resolve();
+          };
+          scriptDOM.onerror = reject;
+          document.head.appendChild(scriptDOM);
+        };
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+    function initializeComponentInjector() {
+      console.log("🔧 Inicializando ComponentInjector...");
+      if (!window.React || !window.ReactDOM) {
+        console.error("❌ React ainda não disponível");
+        return;
+      }
+      window.ComponentInjector = {
+        load: function() {
+          console.log("📦 Carregando componentes...");
+          if (!window.componentInjectorConfig) {
+            console.error("❌ Configuração não encontrada");
+            return;
+          }
+          initializeComponents();
+        }
+      };
+      console.log("✅ ComponentInjector criado");
+    }
+    function initializeComponents() {
+      console.log("🎯 Inicializando componentes...");
+      const config = window.componentInjectorConfig;
+      if (!config || !config.components) {
+        console.error("❌ Configuração de componentes não encontrada");
+        return;
+      }
+      config.components.forEach((component) => {
+        if (component.type === "shelf" && component.enabled) {
+          console.log("🛍️ Inicializando Shelf...");
+          initializeShelf(component);
+        }
+      });
+    }
+    function initializeShelf(config) {
+      return __async(this, null, function* () {
+        var _a, _b, _c, _d, _e, _f, _g, _h;
+        console.log("🛍️ Inicializando Shelf com config:", config);
+        const container = document.querySelector(config.selector);
+        if (!container) {
+          console.error("❌ Container não encontrado:", config.selector);
+          return;
+        }
+        console.log("✅ Container encontrado:", container);
+        try {
+          const { Shelf: Shelf2 } = yield Promise.resolve().then(() => Shelf$1);
+          const { RecommendationsEngine: RecommendationsEngine2 } = yield Promise.resolve().then(() => RecommendationsEngine$1);
+          console.log("✅ Componentes React carregados");
+          const shelfConfig = {
+            title: ((_a = config.props) == null ? void 0 : _a.title) || "Produtos Recomendados",
+            maxItems: ((_b = config.props) == null ? void 0 : _b.maxItems) || 12,
+            enablePagination: ((_c = config.props) == null ? void 0 : _c.enablePagination) || true,
+            enableWishlist: ((_d = config.props) == null ? void 0 : _d.enableWishlist) || true,
+            enableRating: ((_e = config.props) == null ? void 0 : _e.enableRating) || true,
+            products: [],
+            // Será preenchido pelo RecommendationsEngine
+            pagination: {
+              enabled: ((_f = config.props) == null ? void 0 : _f.enablePagination) || true,
+              currentPage: 1,
+              totalPages: 1,
+              itemsPerPage: ((_g = config.props) == null ? void 0 : _g.maxItems) || 12,
+              totalItems: 0,
+              maxPages: 5,
+              showPageNumbers: true,
+              showPrevNext: true
             },
-            grid: {
+            grid: ((_h = config.props) == null ? void 0 : _h.grid) || {
               mobile: { columns: 2, rows: 2, cardHeight: 300, spacing: 16 },
               tablet: { columns: 3, rows: 2, cardHeight: 300, spacing: 20 },
               desktop: { columns: 4, rows: 2, cardHeight: 300, spacing: 24 },
               superapp: { columns: 2, rows: 3, cardHeight: 250, spacing: 12 }
             }
-          }
-        }
-      ]
-    };
-    function loadComponentInjector() {
-      return __async(this, null, function* () {
-        try {
-          yield loadDependencies();
-          const config = window.componentInjectorConfig || defaultConfig;
-          console.log("Loading ComponentInjector with config:", config);
-          yield initializeComponentsDirectly(config);
-          console.log("ComponentInjector loaded successfully");
-        } catch (error) {
-          console.error("Failed to load ComponentInjector:", error);
-          createFallbackShelf();
-        }
-      });
-    }
-    function loadDependencies() {
-      return __async(this, null, function* () {
-        if (window.React && window.ReactDOM) {
-          console.log("React dependencies already loaded");
-          return;
-        }
-        console.log("Loading React dependencies...");
-        if (!window.React) {
-          console.log("Loading React...");
-          yield loadScript("https://unpkg.com/react@18/umd/react.production.min.js");
-          yield new Promise((resolve) => setTimeout(resolve, 100));
-        }
-        if (!window.ReactDOM) {
-          console.log("Loading ReactDOM...");
-          yield loadScript("https://unpkg.com/react-dom@18/umd/react-dom.production.min.js");
-          yield new Promise((resolve) => setTimeout(resolve, 100));
-        }
-        if (!window.React || !window.ReactDOM) {
-          throw new Error("Failed to load React dependencies");
-        }
-        console.log("React dependencies loaded successfully");
-      });
-    }
-    function loadScript(src) {
-      return new Promise((resolve, reject) => {
-        const script = document.createElement("script");
-        script.src = src;
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
-        document.head.appendChild(script);
-      });
-    }
-    function loadReactComponents() {
-      return __async(this, null, function* () {
-        try {
-          const { Shelf: Shelf2 } = yield Promise.resolve().then(() => Shelf$1);
-          const { RecommendationsEngine: RecommendationsEngine2 } = yield Promise.resolve().then(() => RecommendationsEngine$1);
-          return { Shelf: Shelf2, RecommendationsEngine: RecommendationsEngine2 };
-        } catch (error) {
-          console.error("Failed to load React components:", error);
-          throw error;
-        }
-      });
-    }
-    function initializeComponentsDirectly(config) {
-      return __async(this, null, function* () {
-        console.log("Initializing components directly...");
-        const components = yield loadReactComponents();
-        for (const componentConfig of config.components) {
-          if (!componentConfig.enabled)
-            continue;
-          try {
-            if (componentConfig.type === "shelf") {
-              yield initializeShelf(componentConfig, components.Shelf);
-            } else if (componentConfig.type === "recommendations") {
-              yield initializeRecommendations(componentConfig, components.RecommendationsEngine);
-            }
-          } catch (error) {
-            console.error(`Failed to initialize component ${componentConfig.id}:`, error);
-            if (componentConfig.type === "shelf") {
-              yield initializeShelfDirectly(componentConfig);
-            }
-          }
-        }
-      });
-    }
-    function initializeShelf(config, Shelf2) {
-      return __async(this, null, function* () {
-        var _a, _b, _c, _d, _e, _f;
-        let container = document.querySelector(config.selector || "#product-showcase-container");
-        if (!container) {
-          container = createContainerAutomatically(config.props);
-        }
-        if (!container) {
-          console.error("Could not create container for shelf component");
-          return;
-        }
-        const shelfConfig = {
-          title: ((_a = config.props) == null ? void 0 : _a.title) || "Produtos Recomendados",
-          maxItems: ((_b = config.props) == null ? void 0 : _b.maxItems) || 12,
-          enablePagination: ((_c = config.props) == null ? void 0 : _c.enablePagination) || true,
-          enableWishlist: ((_d = config.props) == null ? void 0 : _d.enableWishlist) || true,
-          enableRating: ((_e = config.props) == null ? void 0 : _e.enableRating) || true,
-          grid: ((_f = config.props) == null ? void 0 : _f.grid) || {
-            mobile: { columns: 2, rows: 2, cardHeight: 300, spacing: 16 },
-            tablet: { columns: 3, rows: 2, cardHeight: 300, spacing: 20 },
-            desktop: { columns: 4, rows: 2, cardHeight: 300, spacing: 24 },
-            superapp: { columns: 2, rows: 3, cardHeight: 250, spacing: 12 }
-          }
-        };
-        ReactDOM.render(React.createElement(Shelf2, {
-          config: shelfConfig,
-          onProductClick: (product) => {
-            console.log("Product clicked:", product);
-            if (window.dataLayer) {
-              window.dataLayer.push({
-                event: "product_click",
-                ecommerce: {
-                  click: {
-                    products: [{
-                      item_id: product.id,
-                      item_name: product.name,
-                      price: product.price,
-                      quantity: 1
-                    }]
+          };
+          ReactDOM.render(React.createElement(Shelf2, {
+            config: shelfConfig,
+            onProductClick: (product) => {
+              console.log("Product clicked:", product);
+              if (window.dataLayer) {
+                window.dataLayer.push({
+                  event: "product_click",
+                  ecommerce: {
+                    click: {
+                      products: [{
+                        item_id: product.id,
+                        item_name: product.name,
+                        price: product.price,
+                        quantity: 1
+                      }]
+                    }
                   }
-                }
-              });
-            }
-          },
-          onAddToCart: (product) => {
-            console.log("Product added to cart:", product);
-            if (window.dataLayer) {
-              window.dataLayer.push({
-                event: "add_to_cart",
-                ecommerce: {
-                  add: {
-                    products: [{
-                      item_id: product.id,
-                      item_name: product.name,
-                      price: product.price,
-                      quantity: 1
-                    }]
-                  }
-                }
-              });
-            }
-          },
-          onAddToWishlist: (product) => {
-            console.log("Product added to wishlist:", product);
-            if (window.dataLayer) {
-              window.dataLayer.push({
-                event: "add_to_wishlist",
-                ecommerce: {
-                  add: {
-                    products: [{
-                      item_id: product.id,
-                      item_name: product.name,
-                      price: product.price,
-                      quantity: 1
-                    }]
-                  }
-                }
-              });
-            }
-          }
-        }), container);
-        console.log("Shelf component initialized with React");
-      });
-    }
-    function initializeShelfDirectly(config) {
-      return __async(this, null, function* () {
-        var _a;
-        console.log("Initializing Shelf directly...", config);
-        let container = document.getElementById("product-showcase-container");
-        if (!container) {
-          container = createContainerAutomatically(config.props);
-        }
-        if (!container) {
-          console.error("Could not create container for shelf component");
-          return;
-        }
-        container.innerHTML = `
-      <div class="product-showcase" style="margin: 20px 0; padding: 0 20px;">
-        <div class="showcase-header" style="margin-bottom: 20px;">
-          <h2 class="showcase-title" style="font-size: 24px; font-weight: bold; margin-bottom: 10px;">
-            ${((_a = config.props) == null ? void 0 : _a.title) || "Produtos Recomendados"}
-          </h2>
-        </div>
-        <div class="showcase-content" style="text-align: center; padding: 40px;">
-          <div class="loading-spinner" style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-          <p style="margin-top: 20px;">Carregando produtos recomendados...</p>
-        </div>
-      </div>
-      <style>
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      </style>
-    `;
-        setTimeout(() => {
-          loadProductsForShelf(container, config);
-        }, 2e3);
-        console.log("Shelf component initialized directly");
-      });
-    }
-    function loadProductsForShelf(container, config) {
-      return __async(this, null, function* () {
-        var _a, _b;
-        try {
-          console.log("Loading products for shelf...");
-          const apiResponse = yield fetch("https://gol0qozv97.execute-api.us-east-1.amazonaws.com/qa/products/popular/shop", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-api-key": "8QD7vDvrOn1D6goXfc5xg7p7OYNc71Tr7YI59xaI"
+                });
+              }
             },
-            body: JSON.stringify({
-              page: 1,
-              perPage: ((_a = config.props) == null ? void 0 : _a.maxItems) || 12,
-              products: [],
-              browserId: generateBrowserId2(),
-              documentType: "cpf",
-              customerDocument: generateCustomerDocument2(),
-              filterAlreadyBought: ((_b = config.props) == null ? void 0 : _b.excludeViewed) || false
-            })
-          });
-          if (!apiResponse.ok) {
-            throw new Error(`API request failed: ${apiResponse.status}`);
-          }
-          const apiData = yield apiResponse.json();
-          console.log("API response:", apiData);
-          renderProducts(container, apiData, config);
+            onAddToCart: (product) => {
+              console.log("Product added to cart:", product);
+              if (window.dataLayer) {
+                window.dataLayer.push({
+                  event: "add_to_cart",
+                  ecommerce: {
+                    add: {
+                      products: [{
+                        item_id: product.id,
+                        item_name: product.name,
+                        price: product.price,
+                        quantity: 1
+                      }]
+                    }
+                  }
+                });
+              }
+            },
+            onAddToWishlist: (product) => {
+              console.log("Product added to wishlist:", product);
+              if (window.dataLayer) {
+                window.dataLayer.push({
+                  event: "add_to_wishlist",
+                  ecommerce: {
+                    add: {
+                      products: [{
+                        item_id: product.id,
+                        item_name: product.name,
+                        price: product.price,
+                        quantity: 1
+                      }]
+                    }
+                  }
+                });
+              }
+            }
+          }), container);
+          console.log("✅ Shelf React inicializado com sucesso!");
         } catch (error) {
-          console.error("Failed to load products:", error);
-          container.querySelector(".showcase-content").innerHTML = `
-        <p style="color: #e74c3c;">Erro ao carregar produtos. Tente novamente mais tarde.</p>
-        <button onclick="location.reload()" style="margin-top: 10px; padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">
-          Recarregar
-        </button>
-      `;
-        }
-      });
-    }
-    function renderProducts(container, apiData, config) {
-      var _a, _b, _c, _d, _e, _f;
-      const products = apiData.products || [];
-      if (products.length === 0) {
-        container.querySelector(".showcase-content").innerHTML = `
-        <p>Nenhum produto encontrado.</p>
-      `;
-        return;
-      }
-      const gridColumns = ((_c = (_b = (_a = config.props) == null ? void 0 : _a.grid) == null ? void 0 : _b.desktop) == null ? void 0 : _c.columns) || 4;
-      const gridSpacing = ((_f = (_e = (_d = config.props) == null ? void 0 : _d.grid) == null ? void 0 : _e.desktop) == null ? void 0 : _f.spacing) || 24;
-      container.querySelector(".showcase-content").innerHTML = `
-      <div class="products-grid" style="
-        display: grid;
-        grid-template-columns: repeat(${gridColumns}, 1fr);
-        gap: ${gridSpacing}px;
-        margin-top: 20px;
-      ">
-        ${products.map((product) => {
-        var _a2;
-        return `
-          <div class="product-card" style="
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 16px;
-            text-align: center;
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-            cursor: pointer;
-          " onclick="handleProductClick('${product.id}', '${product.name}', ${product.price})">
-            <div class="product-image" style="
-              width: 100%;
-              height: 200px;
-              background: #f8f9fa;
-              border-radius: 4px;
-              margin-bottom: 12px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-size: 14px;
-              color: #666;
-            ">
-              ${product.image ? `<img src="${product.image}" alt="${product.name}" style="max-width: 100%; max-height: 100%; object-fit: cover;">` : "Sem imagem"}
-            </div>
-            <h3 class="product-name" style="
-              font-size: 16px;
-              font-weight: 600;
-              margin: 0 0 8px 0;
-              color: #333;
-              line-height: 1.3;
-            ">${product.name}</h3>
-            <div class="product-price" style="
-              font-size: 18px;
-              font-weight: bold;
-              color: #2c5aa0;
-              margin-bottom: 12px;
-            ">R$ ${((_a2 = product.price) == null ? void 0 : _a2.toFixed(2)) || "0,00"}</div>
-            <button class="add-to-cart-btn" style="
-              width: 100%;
-              padding: 8px 16px;
-              background: #2c5aa0;
-              color: white;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-              font-size: 14px;
-              font-weight: 500;
-            " onclick="event.stopPropagation(); handleAddToCart('${product.id}', '${product.name}', ${product.price})">
-              Adicionar ao Carrinho
-            </button>
-          </div>
-        `;
-      }).join("")}
-      </div>
-    `;
-      const style = document.createElement("style");
-      style.textContent = `
-      .product-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-      }
-    `;
-      document.head.appendChild(style);
-    }
-    window.handleProductClick = function(productId, productName, price) {
-      console.log("Product clicked:", { productId, productName, price });
-      if (window.dataLayer) {
-        window.dataLayer.push({
-          event: "product_click",
-          ecommerce: {
-            click: {
-              products: [{
-                item_id: productId,
-                item_name: productName,
-                price,
-                quantity: 1
-              }]
-            }
-          }
-        });
-      }
-    };
-    window.handleAddToCart = function(productId, productName, price) {
-      console.log("Product added to cart:", { productId, productName, price });
-      if (window.dataLayer) {
-        window.dataLayer.push({
-          event: "add_to_cart",
-          ecommerce: {
-            add: {
-              products: [{
-                item_id: productId,
-                item_name: productName,
-                price,
-                quantity: 1
-              }]
-            }
-          }
-        });
-      }
-    };
-    function initializeRecommendations(_config, _RecommendationsEngine) {
-      return __async(this, null, function* () {
-        console.log("RecommendationsEngine initialization not implemented yet");
-      });
-    }
-    function createContainerAutomatically(props) {
-      console.log("Container not found, creating automatically...");
-      const defaultSelectors = [
-        'section[aria-label="slider"]',
-        ".vtex-slider-layout-0-x-sliderLayoutContainer",
-        '[data-testid="slider-track"]',
-        ".shelf",
-        ".product-shelf",
-        ".product-carousel",
-        ".recommended-products",
-        ".related-products",
-        ".new-release"
-      ];
-      const customSelectors = props.targetSelectors || [];
-      const selectors = customSelectors.length > 0 ? customSelectors : defaultSelectors;
-      let targetElement = null;
-      for (const selector of selectors) {
-        targetElement = document.querySelector(selector);
-        if (targetElement) {
-          console.log("Found target element:", selector);
-          break;
-        }
-      }
-      if (!targetElement) {
-        console.log("No target element found, appending to body");
-        targetElement = document.body;
-      }
-      const container = document.createElement("div");
-      container.id = "product-showcase-container";
-      container.style.cssText = "margin: 20px 0; padding: 0 20px;";
-      if (props.containerStyles) {
-        for (const prop in props.containerStyles) {
-          container.style[prop] = props.containerStyles[prop];
-        }
-      }
-      const position = props.containerPosition || "after";
-      if (position === "after") {
-        targetElement.parentNode.insertBefore(container, targetElement.nextSibling);
-      } else if (position === "before") {
-        targetElement.parentNode.insertBefore(container, targetElement);
-      } else if (position === "inside") {
-        targetElement.appendChild(container);
-      }
-      console.log("Container created " + position + " target element");
-      return container;
-    }
-    function createFallbackShelf() {
-      console.log("Creating fallback shelf...");
-      const container = document.getElementById("product-showcase-container") || createContainerAutomatically({
-        targetSelectors: [".new-release", "body"],
-        containerPosition: "after"
-      });
-      if (container) {
-        container.innerHTML = `
-        <div class="product-showcase" style="margin: 20px 0; padding: 0 20px;">
-          <div class="showcase-header" style="margin-bottom: 20px;">
-            <h2 class="showcase-title" style="font-size: 24px; font-weight: bold; margin-bottom: 10px;">
-              Produtos Recomendados
-            </h2>
-          </div>
-          <div class="showcase-content" style="text-align: center; padding: 40px;">
-            <p>Carregando produtos recomendados...</p>
+          console.error("❌ Erro ao carregar componentes React:", error);
+          const shelfElement = document.createElement("div");
+          shelfElement.className = "shelf-container";
+          shelfElement.innerHTML = `
+        <div style="padding: 20px; border: 2px solid #007bff; border-radius: 8px; margin: 20px 0; text-align: center;">
+          <h3 style="color: #007bff; margin-bottom: 20px;">${config.props.title || "Produtos Recomendados"}</h3>
+          <div style="padding: 40px;">
+            <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #007bff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;"></div>
+            <p style="color: #666; font-size: 16px;">Carregando produtos...</p>
           </div>
         </div>
+        <style>
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        </style>
       `;
-        console.log("Fallback shelf created");
-      }
+          if (config.props.containerPosition === "after") {
+            container.insertAdjacentElement("afterend", shelfElement);
+          } else {
+            container.appendChild(shelfElement);
+          }
+          console.log("✅ Shelf fallback (carregando) inicializado!");
+        }
+      });
     }
-    function loadStyles() {
-      if (document.getElementById("component-injector-styles")) {
-        return;
-      }
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = "https://c.usebeon.io/core/css/default.css";
-      link.id = "component-injector-styles";
-      document.head.appendChild(link);
-    }
-    window.ComponentInjector = {
-      load: loadComponentInjector,
-      version: "1.0.0",
-      isLoaded: false
-    };
-    loadStyles();
+    console.log("✅ Loader carregado");
   })();
   var jsxRuntime = { exports: {} };
   var reactJsxRuntime_production_min = {};
