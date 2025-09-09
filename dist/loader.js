@@ -70,7 +70,7 @@ var __async = (__this, __arguments, generator) => {
         shelfElement.className = "shelf-container";
         shelfElement.innerHTML = `
       <div style="border: 2px solid #007bff; border-radius: 8px; margin: 20px 0;">
-        <div class="shelf-content" style="text-align: center;">
+        <div class="shelf-content" style="text-align: left;">
           <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #007bff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;"></div>
           <p style="color: #666; font-size: 16px;">Carregando produtos...</p>
         </div>
@@ -85,18 +85,22 @@ var __async = (__this, __arguments, generator) => {
         if (config.props.containerPosition === "after") {
           const recommendationsElement = document.querySelector(".recommendations.bg-mainBg");
           const newReleaseElement = document.querySelector(".new-release.bg-mainBg");
+          const shelfTargetElement = document.querySelector("#shelf-target");
           if (recommendationsElement) {
             console.log("📍 Inserindo após recommendations");
             recommendationsElement.insertAdjacentElement("afterend", shelfElement);
           } else if (newReleaseElement) {
-            console.log("�� Inserindo após new-release");
+            console.log("📍 Inserindo após new-release");
             newReleaseElement.insertAdjacentElement("afterend", shelfElement);
+          } else if (shelfTargetElement) {
+            console.log("📍 Inserindo após shelf-target");
+            shelfTargetElement.insertAdjacentElement("afterend", shelfElement);
           } else {
             console.log("📍 Inserindo após container original");
             container.insertAdjacentElement("afterend", shelfElement);
           }
         } else {
-          container.appendChild(shelfElement);
+          console.warn("❌ Container não encontrado");
         }
         try {
           console.log("🔄 Carregando produtos da API...");
@@ -155,7 +159,7 @@ var __async = (__this, __arguments, generator) => {
       const shelfHTML = template.replace("{{TITLE}}", ((_a = config.props) == null ? void 0 : _a.title) || "Produtos Recomendados").replace("{{PRODUCTS}}", productsHTML);
       container.querySelector(".shelf-content").innerHTML = shelfHTML;
       setTimeout(() => {
-        initializeSlider(container);
+        initializeSlider();
       }, 100);
     }
     function initializeSlider(container) {
@@ -163,10 +167,10 @@ var __async = (__this, __arguments, generator) => {
       if (typeof window["swiffyslider"] === "undefined") {
         console.log("⚠️ Swiffy Slider não encontrado, carregando...");
         loadSwiffySlider().then(() => {
-          initSlider(container);
+          initSlider();
         });
       } else {
-        initSlider(container);
+        initSlider();
       }
     }
     function loadSwiffySlider() {
@@ -182,16 +186,11 @@ var __async = (__this, __arguments, generator) => {
         document.head.appendChild(link);
       });
     }
-    function initSlider(container) {
-      const sliderElement = container.querySelector(".swiffy-slider");
+    function initSlider() {
+      const sliderElement = document.querySelector(".shelf-container");
       if (sliderElement) {
         console.log("✅ Inicializando Swiffy Slider...");
-        let SwiffySliderClass = window["swiffyslider"];
-        if (!SwiffySliderClass) {
-          console.error("❌ SwiffySlider ainda não está disponível");
-          return;
-        }
-        const slider = new SwiffySliderClass(sliderElement, {
+        const slider = window["swiffyslider"].init(sliderElement, {
           autoplay: true,
           autoplayInterval: 5e3,
           pauseOnHover: true,
@@ -265,8 +264,15 @@ var __async = (__this, __arguments, generator) => {
       var _a, _b, _c, _d, _e, _f;
       const discount = product.listPrice > product.price ? Math.round((product.listPrice - product.price) / product.listPrice * 100) : 0;
       const productSlug = product.productName ? `${product.productName.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "")}-${product.productId}` : product.productId;
+      const extractVariantId = (imageUrl) => {
+        if (!imageUrl)
+          return null;
+        const match = imageUrl.match(/\/(\d+)(?:-\d+)?\.jpg/);
+        return match ? match[1] : null;
+      };
       const mainImage = ((_b = (_a = product.images) == null ? void 0 : _a[0]) == null ? void 0 : _b.imageUrl) || product.image;
       const hoverImage = ((_d = (_c = product.images) == null ? void 0 : _c[1]) == null ? void 0 : _d.imageUrl) || ((_f = (_e = product.images) == null ? void 0 : _e[0]) == null ? void 0 : _f.imageUrl) || product.image;
+      const variantId = extractVariantId(mainImage);
       return `
       <div class="flex flex-col justify-center items-center hover:shadow-xl p-2 mr-2 mb-1 lg:mr-7 lg:last:mr-0 group">
         <div class="flex flex-col relative justify-start items-center lg:w-60 w-full min-h-[530px]">
@@ -299,11 +305,11 @@ var __async = (__this, __arguments, generator) => {
             <div class="flex justify-end">
               <div class="flex justify-between items-center w-full my-3 py-3 lg:group-hover:translate-y-5 lg:translate-y-0 lg:opacity-0 lg:invisible lg:group-hover:opacity-100 lg:group-hover:visible lg:duration-500 lg:ease-in-out lg:group-hover:transform">
                 <div class="flex flex-col lg:flex-row justify-between items-center w-full">
-                  <button add-to-cart-button="" type="button" class="flex items-center justify-center w-full lg:w-2/4 p-2 text-white bg-primary-500 lg:hover:bg-primary-600" value="" onclick="spotAddToCartButtonClick(${product.productId})">
+                  <button add-to-cart-button="" type="button" class="flex items-center justify-center w-full lg:w-2/4 p-2 text-white bg-primary-500 lg:hover:bg-primary-600" value="" onclick="spotAddToCartButtonClick(${variantId})">
                     <img src="https://coderivy.fbitsstatic.net/sf/img/icons/plus.svg?theme=main&v=202509081621" alt="Add to cart" class="w-6 h-6 mr-2 stroke-white" />
                     Adicionar
                   </button>
-                  <button buy-button="" type="button" class="flex items-center justify-center w-full lg:w-2/4 p-2 text-white bg-gray-1000 lg:bg-secondary-500 lg:hover:bg-gray-1000" value="" onclick="spotBuyButtonClick(${product.productId})">
+                  <button buy-button="" type="button" class="flex items-center justify-center w-full lg:w-2/4 p-2 text-white bg-gray-1000 lg:bg-secondary-500 lg:hover:bg-gray-1000" value="" onclick="spotBuyButtonClick(${variantId})">
                     <img src="https://coderivy.fbitsstatic.net/sf/img/icons/cart.svg?theme=main&v=202509081621" alt="Buy button" class="w-6 h-6 mr-2" />
                     COMPRAR
                   </button>
