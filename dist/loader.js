@@ -96,8 +96,7 @@ var __async = (__this, __arguments, generator) => {
             console.log("📍 Inserindo após shelf-target");
             shelfTargetElement.insertAdjacentElement("afterend", shelfElement);
           } else {
-            console.log("📍 Inserindo após container original");
-            container.insertAdjacentElement("afterend", shelfElement);
+            console.warn("❌ Container não encontrado");
           }
         } else {
           console.warn("❌ Container não encontrado");
