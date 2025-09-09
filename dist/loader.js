@@ -69,8 +69,8 @@ var __async = (__this, __arguments, generator) => {
         const shelfElement = document.createElement("div");
         shelfElement.className = "shelf-container";
         shelfElement.innerHTML = `
-      <div style="padding: 20px; border: 2px solid #007bff; border-radius: 8px; margin: 20px 0;">
-        <div class="shelf-content" style="text-align: center; padding: 40px;">
+      <div style="border: 2px solid #007bff; border-radius: 8px; margin: 20px 0;">
+        <div class="shelf-content" style="text-align: center;">
           <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #007bff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;"></div>
           <p style="color: #666; font-size: 16px;">Carregando produtos...</p>
         </div>
@@ -160,7 +160,7 @@ var __async = (__this, __arguments, generator) => {
     }
     function initializeSlider(container) {
       console.log("🎠 Inicializando slider...");
-      if (typeof window["SwiffySlider"] === "undefined" && typeof window["swiffyslider"] === "undefined") {
+      if (typeof window["swiffyslider"] === "undefined") {
         console.log("⚠️ Swiffy Slider não encontrado, carregando...");
         loadSwiffySlider().then(() => {
           initSlider(container);
@@ -186,7 +186,7 @@ var __async = (__this, __arguments, generator) => {
       const sliderElement = container.querySelector(".swiffy-slider");
       if (sliderElement) {
         console.log("✅ Inicializando Swiffy Slider...");
-        let SwiffySliderClass = window["SwiffySlider"] || window["swiffyslider"];
+        let SwiffySliderClass = window["swiffyslider"];
         if (!SwiffySliderClass) {
           console.error("❌ SwiffySlider ainda não está disponível");
           return;
