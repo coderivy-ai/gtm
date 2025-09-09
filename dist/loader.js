@@ -154,6 +154,56 @@ var __async = (__this, __arguments, generator) => {
       }).join("");
       const shelfHTML = template.replace("{{TITLE}}", ((_a = config.props) == null ? void 0 : _a.title) || "Produtos Recomendados").replace("{{PRODUCTS}}", productsHTML);
       container.querySelector(".shelf-content").innerHTML = shelfHTML;
+      setTimeout(() => {
+        initializeSlider(container);
+      }, 100);
+    }
+    function initializeSlider(container) {
+      console.log("🎠 Inicializando slider...");
+      if (typeof window["SwiffySlider"] === "undefined" && typeof window["swiffyslider"] === "undefined") {
+        console.log("⚠️ Swiffy Slider não encontrado, carregando...");
+        loadSwiffySlider().then(() => {
+          initSlider(container);
+        });
+      } else {
+        initSlider(container);
+      }
+    }
+    function loadSwiffySlider() {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/swiffy-slider@1.6.0/dist/js/swiffy-slider.min.js";
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "https://cdn.jsdelivr.net/npm/swiffy-slider@1.6.0/dist/css/swiffy-slider.min.css";
+        document.head.appendChild(link);
+      });
+    }
+    function initSlider(container) {
+      const sliderElement = container.querySelector(".swiffy-slider");
+      if (sliderElement) {
+        console.log("✅ Inicializando Swiffy Slider...");
+        let SwiffySliderClass = window["SwiffySlider"] || window["swiffyslider"];
+        if (!SwiffySliderClass) {
+          console.error("❌ SwiffySlider ainda não está disponível");
+          return;
+        }
+        const slider = new SwiffySliderClass(sliderElement, {
+          autoplay: true,
+          autoplayInterval: 5e3,
+          pauseOnHover: true,
+          pauseOnFocus: true,
+          rewind: true,
+          nav: true,
+          indicators: true
+        });
+        console.log("✅ Slider inicializado:", slider);
+      } else {
+        console.error("❌ Elemento do slider não encontrado");
+      }
     }
     function getDesktopTemplate() {
       return `
