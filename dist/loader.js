@@ -1,79 +1,7 @@
-var __async = (__this, __arguments, generator) => {
-  return new Promise((resolve, reject) => {
-    var fulfilled = (value) => {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var rejected = (value) => {
-      try {
-        step(generator.throw(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-    step((generator = generator.apply(__this, __arguments)).next());
-  });
-};
-(function() {
-  "use strict";
-  (function() {
-    console.log("🚀 Iniciando ComponentInjector...");
-    if (window.ComponentInjector) {
-      console.log("⚠️ ComponentInjector já existe");
-      return;
-    }
-    console.log("✅ Inicializando com JavaScript puro...");
-    initializeComponentInjector();
-    function initializeComponentInjector() {
-      console.log("🔧 Inicializando ComponentInjector...");
-      window.ComponentInjector = {
-        load: function() {
-          console.log("📦 Carregando componentes...");
-          if (!window.componentInjectorConfig) {
-            console.error("❌ Configuração não encontrada");
-            return;
-          }
-          initializeComponents();
-        }
-      };
-      console.log("✅ ComponentInjector criado");
-    }
-    function initializeComponents() {
-      console.log("🎯 Inicializando componentes...");
-      const config = window.componentInjectorConfig;
-      if (!config || !config.components) {
-        console.error("❌ Configuração de componentes não encontrada");
-        return;
-      }
-      config.components.forEach((component) => {
-        if (component.type === "shelf" && component.enabled) {
-          console.log("🛍️ Inicializando Shelf...");
-          initializeShelf(component);
-        }
-      });
-    }
-    function initializeShelf(config) {
-      return __async(this, null, function* () {
-        var _a, _b;
-        console.log("🛍️ Inicializando Shelf com config:", config);
-        const container = document.querySelector(config.selector);
-        if (!container) {
-          console.error("❌ Container não encontrado:", config.selector);
-          return;
-        }
-        console.log("✅ Container encontrado:", container);
-        const shelfElement = document.createElement("div");
-        shelfElement.className = "shelf-container";
-        shelfElement.innerHTML = `
-      <div style="border: 2px solid #007bff; border-radius: 8px; margin: 20px 0;">
-        <div class="shelf-content" style="text-align: left;">
-          <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #007bff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;"></div>
-          <p style="color: #666; font-size: 16px;">Carregando produtos...</p>
-        </div>
+var J=Object.defineProperty;var x=Object.getOwnPropertySymbols;var H=Object.prototype.hasOwnProperty,k=Object.prototype.propertyIsEnumerable;var j=(g,m,s)=>m in g?J(g,m,{enumerable:!0,configurable:!0,writable:!0,value:s}):g[m]=s,T=(g,m)=>{for(var s in m||(m={}))H.call(m,s)&&j(g,s,m[s]);if(x)for(var s of x(m))k.call(m,s)&&j(g,s,m[s]);return g};var a=(g,m,s)=>new Promise((S,R)=>{var C=h=>{try{E(s.next(h))}catch(f){R(f)}},I=h=>{try{E(s.throw(h))}catch(f){R(f)}},E=h=>h.done?S(h.value):Promise.resolve(h.value).then(C,I);E((s=s.apply(g,m)).next())});(function(){"use strict";class g{createLoadingElement(){const e=document.createElement("div");return e.className="shelf-container",e.innerHTML=this.getLoadingTemplate(),e}createErrorElement(e){const t=document.createElement("div");return t.className="shelf-error",t.innerHTML=this.getErrorTemplate(e),t}getLoadingTemplate(){return`
+      <div class="shelf-content" style="text-align: left; border: 2px solid #007bff; border-radius: 8px; margin: 20px 0; padding: 20px;">
+        <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #007bff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px;"></div>
+        <p style="color: #666; font-size: 16px;">Carregando produtos...</p>
       </div>
       <style>
         @keyframes spin {
@@ -81,311 +9,100 @@ var __async = (__this, __arguments, generator) => {
           100% { transform: rotate(360deg); }
         }
       </style>
-    `;
-        if (config.props.containerPosition === "after") {
-          const recommendationsElement = document.querySelector(".recommendations.bg-mainBg");
-          const newReleaseElement = document.querySelector(".new-release.bg-mainBg");
-          const shelfTargetElement = document.querySelector("#shelf-target");
-          if (recommendationsElement) {
-            console.log("📍 Inserindo após recommendations");
-            recommendationsElement.insertAdjacentElement("afterend", shelfElement);
-          } else if (newReleaseElement) {
-            console.log("📍 Inserindo após new-release");
-            newReleaseElement.insertAdjacentElement("afterend", shelfElement);
-          } else if (shelfTargetElement) {
-            console.log("📍 Inserindo após shelf-target");
-            shelfTargetElement.insertAdjacentElement("afterend", shelfElement);
-          } else {
-            console.warn("❌ Container não encontrado");
-          }
-        } else {
-          console.warn("❌ Container não encontrado");
-        }
-        try {
-          console.log("🔄 Carregando produtos da API...");
-          const apiResponse = yield fetch("https://gol0qozv97.execute-api.us-east-1.amazonaws.com/qa/products/popular/shopwake", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-api-key": "8QD7vDvrOn1D6goXfc5xg7p7OYNc71Tr7YI59xaI"
-            },
-            body: JSON.stringify({
-              page: 1,
-              perPage: ((_a = config.props) == null ? void 0 : _a.maxItems) || 12,
-              products: [],
-              browserId: generateBrowserId(),
-              documentType: "cpf",
-              customerDocument: generateCustomerDocument(),
-              filterAlreadyBought: ((_b = config.props) == null ? void 0 : _b.excludeViewed) || false
-            })
-          });
-          if (!apiResponse.ok) {
-            throw new Error(`API request failed: ${apiResponse.status}`);
-          }
-          const apiData = yield apiResponse.json();
-          console.log("✅ Produtos carregados:", apiData);
-          renderProducts(shelfElement, apiData, config);
-        } catch (error) {
-          console.error("❌ Erro ao carregar produtos:", error);
-          shelfElement.querySelector(".shelf-content").innerHTML = `
-        <p style="color: #e74c3c;">Erro ao carregar produtos. Tente novamente mais tarde.</p>
-        <button onclick="location.reload()" style="margin-top: 10px; padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">
+    `}getErrorTemplate(e){return`
+      <div style="text-align: left; border: 2px solid #e74c3c; border-radius: 8px; margin: 20px 0; padding: 20px; background-color: #fdf2f2;">
+        <p style="color: #e74c3c; margin: 0 0 10px 0;">❌ ${e||"Erro ao carregar produtos. Tente novamente mais tarde."}</p>
+        <button onclick="location.reload()" style="padding: 8px 16px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
           Recarregar
         </button>
-      `;
-        }
-        console.log("✅ Shelf JavaScript puro inicializado!");
-      });
-    }
-    function renderProducts(container, apiData, config) {
-      var _a;
-      const products = apiData.products || [];
-      if (products.length === 0) {
-        container.querySelector(".shelf-content").innerHTML = `
-        <p>Nenhum produto encontrado.</p>
-      `;
-        return;
-      }
-      const isMobile = window.innerWidth <= 768 || window.matchMedia("(max-width: 768px)").matches;
-      console.log("Detecção mobile:", {
-        windowWidth: window.innerWidth,
-        isMobile
-      });
-      const template = isMobile ? getMobileTemplate() : getDesktopTemplate();
-      const productsHTML = products.map((product, index) => {
-        return renderProductCard(product);
-      }).join("");
-      const shelfHTML = template.replace("{{TITLE}}", ((_a = config.props) == null ? void 0 : _a.title) || "Produtos Recomendados").replace("{{PRODUCTS}}", productsHTML);
-      container.querySelector(".shelf-content").innerHTML = shelfHTML;
-      setTimeout(() => {
-        initializeSlider();
-      }, 100);
-    }
-    function initializeSlider(container) {
-      console.log("🎠 Inicializando slider...");
-      if (typeof window["swiffyslider"] === "undefined") {
-        console.log("⚠️ Swiffy Slider não encontrado, carregando...");
-        loadSwiffySlider().then(() => {
-          initSlider();
-        });
-      } else {
-        initSlider();
-      }
-    }
-    function loadSwiffySlider() {
-      return new Promise((resolve, reject) => {
-        const script = document.createElement("script");
-        script.src = "https://cdn.jsdelivr.net/npm/swiffy-slider@1.6.0/dist/js/swiffy-slider.min.js";
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = "https://cdn.jsdelivr.net/npm/swiffy-slider@1.6.0/dist/css/swiffy-slider.min.css";
-        document.head.appendChild(link);
-      });
-    }
-    function initSlider() {
-      const sliderElement = document.querySelector(".shelf-container");
-      if (sliderElement) {
-        console.log("✅ Inicializando Swiffy Slider...");
-        const slider = window["swiffyslider"].init(sliderElement, {
-          autoplay: true,
-          autoplayInterval: 5e3,
-          pauseOnHover: true,
-          pauseOnFocus: true,
-          rewind: true,
-          nav: true,
-          indicators: true
-        });
-        console.log("✅ Slider inicializado:", slider);
-      } else {
-        console.error("❌ Elemento do slider não encontrado");
-      }
-    }
-    function getDesktopTemplate() {
-      return `
-      <div class="flex flex-col my-4 w-full lg:flex-row lg:justify-center new-release bg-mainBg">
-        <div class="flex flex-col items-start w-full lg:max-w-[1330px] px-2 relative">
-          <h2 class="w-full text-lg lg:text-2xl uppercase mb-4 pb-4 border-b">
-            {{TITLE}}
-          </h2>
-          <div class="swiffy-slider slider-nav-dark slider-nav-visible slider-nav-autoplay slider-nav-autopause slider-indicators-round slider-indicators-dark slider-indicators-highlight slider-indicators-sm slider-item-show4 slider-item-show2-sm slider-item-snapstart" data-slider-nav-autoplay-interval="5000">
-            <div class="slider-container">
-              {{PRODUCTS}}
-            </div>
-            <div>
-              <div class="absolute bg-inherit shadow-none rounded-none outline-none p-0 z-10 text-4xl left-auto -top-12 right-16">
-                <button type="button" class="slider-nav">
-                  <img src="https://coderivy.fbitsstatic.net/sf/img/icons/arrow-left.svg?theme=main&v=202509081621" alt="arrow-left" class="w-6 h-6 m-2" />
-                </button>
-              </div>
-              <div class="absolute bg-inherit shadow-none rounded-none outline-none p-0 z-10 text-4xl left-auto -top-12 right-0">
-                <button type="button" class="slider-nav slider-nav-next">
-                  <img src="https://coderivy.fbitsstatic.net/sf/img/icons/arrow-right.svg?theme=main&v=202509081621" alt="arrow-right" class="w-6 h-6 m-2" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
-    `;
-    }
-    function getMobileTemplate() {
-      return `
-      <div class="flex flex-col my-4 w-full lg:flex-row lg:justify-center new-release bg-mainBg">
-        <div class="flex flex-col items-start w-full lg:max-w-[1330px] px-2 relative">
-          <h2 class="w-full text-lg lg:text-2xl uppercase mb-4 pb-4 border-b">
-            {{TITLE}}
-          </h2>
-          <div class="swiffy-slider slider-nav-dark slider-nav-visible slider-nav-autoplay slider-nav-autopause slider-indicators-round slider-indicators-dark slider-indicators-highlight slider-indicators-sm slider-item-show4 slider-item-show2-sm slider-item-snapstart" data-slider-nav-autoplay-interval="5000">
-            <div class="slider-container">
-              {{PRODUCTS}}
-            </div>
-            <div>
-              <div class="absolute bg-inherit shadow-none rounded-none outline-none p-0 z-10 text-4xl left-auto -top-12 right-16">
-                <button type="button" class="slider-nav">
-                  <img src="https://coderivy.fbitsstatic.net/sf/img/icons/arrow-left.svg?theme=main&v=202509081621" alt="arrow-left" class="w-6 h-6 m-2" />
-                </button>
+    `}}class m{createElement(e){const t=document.createElement("template");t.innerHTML=e.trim();const o=t.content.firstElementChild;if(!o)throw new Error("Failed to create element from HTML");return o}}var s=(l=>(l.AFTER="after",l.BEFORE="before",l.APPEND="append",l.PREPEND="prepend",l))(s||{});const S=class U{insertElement(e,t){const o=t.containerPosition;return o===s.AFTER||o===s.BEFORE?this.insertAdjacentToTargets(e,o,t.targetSelectors):this.insertIntoContainer(e,t.targetSelectors[0],o)}insertAdjacentToTargets(e,t,o){const n=o.length>0?o:U.DEFAULT_INSERTION_SELECTORS;for(const r of n){const i=document.querySelector(r);if(i)return console.log(`📍 Inserting shelf '${t}' element: ${r}`),i.insertAdjacentElement(t===s.AFTER?"afterend":"beforebegin",e),!0}return console.warn("⚠️ None of the insertion selectors were found:",n),!1}insertIntoContainer(e,t,o){const n=document.querySelector(t);return n?(console.log(`✅ Inserting shelf into: ${t}`),o===s.PREPEND?n.prepend(e):n.appendChild(e),!0):(console.error("❌ Container not found:",t),!1)}};S.DEFAULT_INSERTION_SELECTORS=[".recommendations.bg-mainBg",".new-release.bg-mainBg","#shelf-target"];let R=S;class C{constructor(e=new m,t=new R,o=new g){this.elementCreator=e,this.elementInserter=t,this.uiElementFactory=o}insertElement(e,t){return this.elementInserter.insertElement(e,t)}createElement(e){return this.elementCreator.createElement(e)}createLoadingElement(){return this.uiElementFactory.createLoadingElement()}createErrorElement(e){return this.uiElementFactory.createErrorElement(e)}}const I=class y{getBrowserId(){let e=this.getItem(y.BROWSER_ID_KEY);return e||(e=this.generateBrowserId(),this.setItem(y.BROWSER_ID_KEY,e)),e}getCustomerDocument(){let e=this.getItem(y.CUSTOMER_DOC_KEY);return e||(e=this.generateCustomerDocument(),this.setItem(y.CUSTOMER_DOC_KEY,e)),e}setItem(e,t){try{localStorage.setItem(e,t)}catch(o){console.warn("Failed to set localStorage item:",e,o)}}getItem(e){try{return localStorage.getItem(e)}catch(t){return console.warn("Failed to get localStorage item:",e,t),null}}generateBrowserId(){const e=Math.random().toString(36).substr(2,9),t=Date.now();return`browser_${e}_${t}`}generateCustomerDocument(){return(Math.floor(Math.random()*9e8)+1e8).toString()}};I.BROWSER_ID_KEY="browserId",I.CUSTOMER_DOC_KEY="customerDocument";let E=I;class h{constructor(e){this.httpService=e}getConfigs(e){return a(this,null,function*(){try{console.log("🌐 [INJECTOR-API] =========================================="),console.log("🔧 [INJECTOR-API] Fetching configs for sellerFlavor:",e);const t=`/configs/by-seller/${e}`;console.log("📡 [INJECTOR-API] Request URL:",t),console.log("🔑 [INJECTOR-API] API Base URL:",this.httpService.getBaseUrl()),console.log("⏰ [INJECTOR-API] Request Time:",new Date().toISOString());const o=performance.now(),n=yield this.httpService.get(t),r=performance.now();return console.log("✅ [INJECTOR-API] Configs fetched successfully"),console.log("⏱️ [INJECTOR-API] Response Time:",`${(r-o).toFixed(2)}ms`),console.log("📊 [INJECTOR-API] Response Data:",JSON.stringify(n,null,2)),console.log("🌐 [INJECTOR-API] =========================================="),n}catch(t){throw console.error("❌ [INJECTOR-API] =========================================="),console.error("❌ [INJECTOR-API] Failed to fetch configs for seller:",e),console.error("📡 [INJECTOR-API] Request URL:",`/configs/by-seller/${e}`),console.error("🔍 [INJECTOR-API] Error Details:",t),console.error("🌐 [INJECTOR-API] =========================================="),new Error(`Failed to fetch configs for seller ${e}: ${t instanceof Error?t.message:"Unknown error"}`)}})}listComponents(e,t){return a(this,null,function*(){try{console.log("🌐 [INJECTOR-API] =========================================="),console.log("🔧 [INJECTOR-API] Fetching components with IDs:",e.join(", ")),console.log("🏪 [INJECTOR-API] Seller Flavor:",t);const o=`/components/by-ids?ids=${e.join(",")}`;console.log("📡 [INJECTOR-API] Request URL:",o),console.log("🔑 [INJECTOR-API] API Base URL:",this.httpService.getBaseUrl()),console.log("📋 [INJECTOR-API] Component IDs Count:",e.length),console.log("⏰ [INJECTOR-API] Request Time:",new Date().toISOString());const n=performance.now(),r=yield this.httpService.get(o,{headers:{"seller-flavor":t}}),i=performance.now();return console.log("✅ [INJECTOR-API] Components fetched successfully"),console.log("⏱️ [INJECTOR-API] Response Time:",`${(i-n).toFixed(2)}ms`),console.log("📊 [INJECTOR-API] Components Count:",r.length),console.log("📊 [INJECTOR-API] Response Data:",JSON.stringify(r,null,2)),console.log("🌐 [INJECTOR-API] =========================================="),r}catch(o){throw console.error("❌ [INJECTOR-API] =========================================="),console.error("❌ [INJECTOR-API] Failed to fetch components with IDs:",e.join(", ")),console.error("📡 [INJECTOR-API] Request URL:",`/components/by-ids?ids=${e.join(",")}`),console.error("🔍 [INJECTOR-API] Error Details:",o),console.error("🌐 [INJECTOR-API] =========================================="),new Error(`Failed to fetch components: ${o instanceof Error?o.message:"Unknown error"}`)}})}getTemplate(e,t){return a(this,null,function*(){try{console.log("🌐 [INJECTOR-API] =========================================="),console.log("🎨 [INJECTOR-API] Fetching template with ID:",e),console.log("🏪 [INJECTOR-API] Seller Flavor:",t);const o=`/templates/${e}`;console.log("📡 [INJECTOR-API] Request URL:",o),console.log("🔑 [INJECTOR-API] API Base URL:",this.httpService.getBaseUrl()),console.log("🆔 [INJECTOR-API] Template ID:",e),console.log("⏰ [INJECTOR-API] Request Time:",new Date().toISOString());const n=performance.now(),r=yield this.httpService.get(o,{headers:{"seller-flavor":t}}),i=performance.now();return console.log("✅ [INJECTOR-API] Template fetched successfully"),console.log("⏱️ [INJECTOR-API] Response Time:",`${(i-n).toFixed(2)}ms`),console.log("🏷️ [INJECTOR-API] Template Name:",r.name),console.log("🏪 [INJECTOR-API] Seller Flavor:",r.sellerFlavor),console.log("📊 [INJECTOR-API] Response Data:",JSON.stringify(r,null,2)),console.log("🌐 [INJECTOR-API] =========================================="),r}catch(o){throw console.error("❌ [INJECTOR-API] =========================================="),console.error("❌ [INJECTOR-API] Failed to fetch template with ID:",e),console.error("📡 [INJECTOR-API] Request URL:",`/templates/${e}`),console.error("🔍 [INJECTOR-API] Error Details:",o),console.error("🌐 [INJECTOR-API] =========================================="),new Error(`Failed to fetch template ${e}: ${o instanceof Error?o.message:"Unknown error"}`)}})}getTemplateLegacy(e,t){return a(this,null,function*(){return console.warn("⚠️ Using legacy getTemplate method. Consider migrating to getTemplate(templateId)"),console.log(`🎨 Returning mock template for sellerFlavor: ${e}, templateName: ${t}`),this.getMockTemplate(e,t)})}getMockTemplate(e,t){return{id:1,sellerFlavor:e,name:t,html:this.getShelfTemplate(),css:this.getShelfCSS(),js:void 0,createdAt:new Date,updatedAt:new Date}}getShelfTemplate(){return`
+      <div class="w-full my-8 px-4">
+        <div class="max-w-7xl mx-auto">
+          <!-- Header Section -->
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center">
+              <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
               </div>
-              <div class="absolute bg-inherit shadow-none rounded-none outline-none p-0 z-10 text-4xl left-auto -top-12 right-0">
-                <button type="button" class="slider-nav slider-nav-next">
-                  <img src="https://coderivy.fbitsstatic.net/sf/img/icons/arrow-right.svg?theme=main&v=202509081621" alt="arrow-right" class="w-6 h-6 m-2" />
-                </button>
-              </div>
+              <h2 class="text-2xl font-bold text-gray-900">{{title}}</h2>
             </div>
-          </div>
-        </div>
-      </div>
-    `;
-    }
-    function renderProductCard(product, index, isMobile) {
-      var _a, _b, _c, _d, _e, _f;
-      const discount = product.listPrice > product.price ? Math.round((product.listPrice - product.price) / product.listPrice * 100) : 0;
-      const productSlug = product.productName ? `${product.productName.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "")}-${product.productId}` : product.productId;
-      const extractVariantId = (imageUrl) => {
-        if (!imageUrl)
-          return null;
-        const match = imageUrl.match(/\/(\d+)(?:-\d+)?\.jpg/);
-        return match ? match[1] : null;
-      };
-      const mainImage = ((_b = (_a = product.images) == null ? void 0 : _a[0]) == null ? void 0 : _b.imageUrl) || product.image;
-      const hoverImage = ((_d = (_c = product.images) == null ? void 0 : _c[1]) == null ? void 0 : _d.imageUrl) || ((_f = (_e = product.images) == null ? void 0 : _e[0]) == null ? void 0 : _f.imageUrl) || product.image;
-      const variantId = extractVariantId(mainImage);
-      return `
-      <div class="flex flex-col justify-center items-center hover:shadow-xl p-2 mr-2 mb-1 lg:mr-7 lg:last:mr-0 group">
-        <div class="flex flex-col relative justify-start items-center lg:w-60 w-full min-h-[530px]">
-          <div spot-container="" class="flex justify-center w-full max-h-auto box-content group">
-            <a href="/produto/${productSlug}">
-              <img src="${mainImage}" alt="Product image" class="w-full group-hover:hidden" fetchpriority="high" width="640" height="360" />
-              <img src="${hoverImage}" alt="Product image" class="group-hover:flex hidden" fetchpriority="high" width="640" height="360" />
+            <a href="#" class="text-blue-600 hover:text-blue-700 font-medium text-sm">
+              Veja todos
             </a>
           </div>
-          <div class="flex justify-start items-center w-full"></div>
-          <div class="flex flex-col justify-between h-full">
-            <div class="flex flex-col">
-              <a href="/produto/${productSlug}">
-                <span class="text-xl my-2 text-[#1E1E1E]">${product.productName}</span>
-              </a>
-              <div class="stamps d-flex row"></div>
-              <div class="text-xl">
-                ${product.listPrice > product.price ? `<p class="text-base text-[#1E1E1E]"><s>R$ ${product.listPrice.toFixed(2)}</s></p>` : ""}
-                <h2><b>R$ ${product.price.toFixed(2)}</b></h2>
-              </div>
-              <div>
-                <p>ou <b>em 0x de R$ 0,00 com juros</b></p>
-              </div>
-              ${discount > 0 ? `
-                <div class="absolute top-1 left-1 py-1 px-2 rounded-full text-white shadow-xl bg-primary-700 origin-top-right">
-                  - ${discount}%
-                </div>
-              ` : ""}
+
+          <!-- Products Slider -->
+          <div class="swiffy-slider slider-nav-dark slider-nav-visible slider-nav-autoplay slider-nav-autopause slider-item-show5 slider-item-show3-lg slider-item-show2-md slider-item-show1-sm slider-item-snapstart" data-slider-nav-autoplay-interval="5000">
+            <div class="slider-container pb-4">
+              {{products}}
             </div>
-            <div class="flex justify-end">
-              <div class="flex justify-between items-center w-full my-3 py-3 lg:group-hover:translate-y-5 lg:translate-y-0 lg:opacity-0 lg:invisible lg:group-hover:opacity-100 lg:group-hover:visible lg:duration-500 lg:ease-in-out lg:group-hover:transform">
-                <div class="flex flex-col lg:flex-row justify-between items-center w-full">
-                  <button add-to-cart-button="" type="button" class="flex items-center justify-center w-full lg:w-2/4 p-2 text-white bg-primary-500 lg:hover:bg-primary-600" value="" onclick="spotAddToCartButtonClick(${variantId})">
-                    <img src="https://coderivy.fbitsstatic.net/sf/img/icons/plus.svg?theme=main&v=202509081621" alt="Add to cart" class="w-6 h-6 mr-2 stroke-white" />
-                    Adicionar
-                  </button>
-                  <button buy-button="" type="button" class="flex items-center justify-center w-full lg:w-2/4 p-2 text-white bg-gray-1000 lg:bg-secondary-500 lg:hover:bg-gray-1000" value="" onclick="spotBuyButtonClick(${variantId})">
-                    <img src="https://coderivy.fbitsstatic.net/sf/img/icons/cart.svg?theme=main&v=202509081621" alt="Buy button" class="w-6 h-6 mr-2" />
-                    COMPRAR
-                  </button>
-                </div>
-              </div>
-              <div class="absolute top-1 right-1">
-                <button type="button" id="wishlist-button-${product.productId}" aria-label="Add to wishlist" alt="wishlist" onclick='wishlistAddClick(this,"${product.productId}")'>
-                  <svg class="w-6 h-6" id="wishlist-icon-${product.productId}" width="24" height="24" viewBox="0 0 23 20" fill="none" stroke="black" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3.12825 3.05745C2.67628 3.50942 2.31775 4.04599 2.07314 4.63652C1.82853 5.22705 1.70264 5.85997 1.70264 6.49916C1.70264 7.13834 1.82853 7.77127 2.07314 8.3618C2.31775 8.95233 2.67628 9.4889 3.12825 9.94087L11.4372 18.2499L19.7462 9.94087C20.659 9.02807 21.1718 7.79005 21.1718 6.49916C21.1718 5.20827 20.659 3.97025 19.7462 3.05745C18.8334 2.14465 17.5954 1.63185 16.3045 1.63185C15.0136 1.63185 13.7756 2.14465 12.8628 3.05745L11.4372 4.48302L10.0117 3.05745C9.5597 2.60548 9.02313 2.24695 8.4326 2.00234C7.84207 1.75773 7.20915 1.63184 6.56996 1.63184C5.93078 1.63184 5.29785 1.75773 4.70732 2.00234C4.11679 2.24695 3.58022 2.60548 3.12825 3.05745Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal" id="add-to-cart-modal-${product.productId}" aria-labelledby="addToCartFromSpot" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-scrollable modal-xl modal-dialog-centered">
-            <div id="add-to-cart-modal-content-${product.productId}"></div>
+            
+            <!-- Navigation Arrows -->
+            <button type="button" class="slider-nav absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center hover:shadow-xl transition-all duration-200 z-10">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            
+            <button type="button" class="slider-nav slider-nav-next absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center hover:shadow-xl transition-all duration-200 z-10">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
-    `;
-    }
-    function generateBrowserId() {
-      let browserId = localStorage.getItem("browserId");
-      if (!browserId) {
-        browserId = "browser_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
-        localStorage.setItem("browserId", browserId);
+    `}getShelfCSS(){return`
+      .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
       }
-      return browserId;
-    }
-    function generateCustomerDocument() {
-      let customerDoc = localStorage.getItem("customerDocument");
-      if (!customerDoc) {
-        const randomNumbers = Math.floor(Math.random() * 9e8) + 1e8;
-        customerDoc = randomNumbers.toString();
-        localStorage.setItem("customerDocument", customerDoc);
+      
+      .swiffy-slider {
+        position: relative;
       }
-      return customerDoc;
-    }
-    window.handleProductClick = function(productId, productName, price) {
-      console.log("Product clicked:", { productId, productName, price });
-      if (window.dataLayer) {
-        window.dataLayer.push({
-          event: "product_click",
-          ecommerce: {
-            click: {
-              products: [{
-                item_id: productId,
-                item_name: productName,
-                price,
-                quantity: 1
-              }]
-            }
-          }
-        });
+      
+      .slider-container {
+        display: flex;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
       }
-    };
-    window.handleAddToCart = function(productId, productName, price) {
-      console.log("Product added to cart:", { productId, productName, price });
-      if (window.dataLayer) {
-        window.dataLayer.push({
-          event: "add_to_cart",
-          ecommerce: {
-            add: {
-              products: [{
-                item_id: productId,
-                item_name: productName,
-                price,
-                quantity: 1
-              }]
-            }
-          }
-        });
+      
+      .slider-container::-webkit-scrollbar {
+        display: none;
       }
-    };
-    console.log("✅ Loader carregado");
-  })();
-})();
-//# sourceMappingURL=loader.js.map
+      
+      @media (max-width: 640px) {
+        .slider-item-show1-sm .slider-container > * {
+          flex: 0 0 calc(100% - 16px);
+        }
+      }
+      
+      @media (min-width: 641px) and (max-width: 768px) {
+        .slider-item-show2-md .slider-container > * {
+          flex: 0 0 calc(50% - 16px);
+        }
+      }
+      
+      @media (min-width: 769px) and (max-width: 1024px) {
+        .slider-item-show3-lg .slider-container > * {
+          flex: 0 0 calc(33.333% - 16px);
+        }
+      }
+      
+      @media (min-width: 1025px) {
+        .slider-item-show5 .slider-container > * {
+          flex: 0 0 calc(20% - 16px);
+        }
+      }
+    `}}class f{constructor(e,t,o,n,r,i=[]){this.id=e,this.name=t,this.price=o,this.listPrice=n,this.mainImage=r,this.images=i}get hasDiscount(){return this.listPrice>this.price}get discountPercentage(){return this.hasDiscount?Math.round((this.listPrice-this.price)/this.listPrice*100):0}get installmentPrice(){return this.price/4}generateSlug(){return this.name?`${this.name.toLowerCase().replace(/[^a-z0-9\s]/g,"").replace(/\s+/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,"")}-${this.id}`:this.id}getMainImage(){var e,t;return((t=(e=this.images)==null?void 0:e[0])==null?void 0:t.imageUrl)||this.mainImage}getHoverImage(){var e,t;return((t=(e=this.images)==null?void 0:e[1])==null?void 0:t.imageUrl)||this.getMainImage()}static fromApiResponse(e){return new f(e.productId,e.productName,e.price,e.listPrice,e.image,e.images||[])}}class _{constructor(e){this.httpService=e}getRecommendations(e,t){return a(this,null,function*(){const o={page:1,perPage:e.maxItems,products:[],browserId:e.browserId,documentType:"cpf",customerDocument:e.customerDocument,filterAlreadyBought:e.excludeViewed};try{const n=`/products/${e.recommendationType}/${t}`;console.log("🔍 [RECOMMENDATIONS] Making request to:",n),console.log("🔍 [RECOMMENDATIONS] Full URL will be:",this.httpService.getBaseUrl()+n),console.log("🔍 [RECOMMENDATIONS] Request data:",JSON.stringify(o,null,2));const r=yield this.httpService.post(n,o);return!r.products||!Array.isArray(r.products)?(console.error("Invalid API response: products array missing or invalid"),[]):r.products.map(c=>f.fromApiResponse(c))}catch(n){throw console.error("Failed to get recommendations:",n),n}})}}class P{constructor(e,t){this.data=e,this.template=t}get title(){return this.data.title}get products(){return this.data.products}get configuration(){return this.data.configuration}get productCount(){return this.data.products.length}hasProducts(){return this.data.products.length>0}getProductsHtml(){return this.data.products.map(e=>this.renderProductCard(e)).join("")}renderProductCard(e){return this.renderProductFromTemplate(e)}renderProductFromTemplate(e){var i;const t=e.installmentPrice.toFixed(2),o=this.extractVariantId(e),n={id:e.id.toString(),name:e.name,slug:e.generateSlug(),mainImage:e.getMainImage(),price:e.price.toFixed(2),listPrice:e.listPrice.toFixed(2),installmentPrice:t,discountPercentage:((i=e.discountPercentage)==null?void 0:i.toString())||"0",hasDiscount:e.hasDiscount?"true":"false",variantId:o||"",discountBadge:e.hasDiscount?`<div class="product-badge">-${e.discountPercentage}%</div>`:"",listPriceSection:e.hasDiscount?`<div style="font-size: 0.875rem; color: #a0aec0; text-decoration: line-through; margin-bottom: 4px;">de R$ ${e.listPrice.toFixed(2)}</div>`:"",ratingStars:""};let r=this.getProductCardTemplate();return Object.entries(n).forEach(([c,d])=>{const p=new RegExp(`{{${c}}}`,"g");r=r.replace(p,d)}),r}getProductCardTemplate(){const e=this.template.html.match(new RegExp('<template id="product-card-template">(.*?)<\\/template>',"s"));if(e)return e[1].trim();throw new Error(`No product card template found in database template for seller: ${this.template.sellerFlavor}`)}extractVariantId(e){const t=e.getMainImage();if(!t)return null;const o=t.match(/\/(\d+)(?:-\d+)?\.jpg/);return o?o[1]:null}replacePlaceholders(e,t){let o=e;return Object.entries(t).forEach(([n,r])=>{const i=new RegExp(`{{${n}}}`,"g");o=o.replace(i,r)}),o}renderShelfHtml(){let e=this.template.html;return e=this.replacePlaceholders(e,{title:this.title,products:this.getProductsHtml(),productCount:this.productCount.toString()}),e=e.replace(new RegExp('<template id="product-card-template">.*?<\\/template>',"s"),""),this.template.css&&(e+=`
+<style>
+${this.template.css}
+</style>`),e}}class L{constructor(e,t,o){this.templateRepository=e,this.domRepository=t,this.recommendationApiRepository=o}renderShelvesForSeller(e){return a(this,null,function*(){console.log("🛍️ Starting database-driven shelf rendering for seller:",e.sellerFlavor);const t=yield this.templateRepository.getConfigs(e.sellerFlavor);console.log("📋 Configs retrieved:",t);let o=[];console.log("📋 Processing array of configs, count:",t.length);for(const i of t)if(i.components)if(typeof i.components=="object"&&"components"in i.components){const c=i.components.components;Array.isArray(c)&&(o.push(...c),console.log("📋 Extracted nested component IDs:",c))}else Array.isArray(i.components)&&(o.push(...i.components),console.log("📋 Extracted direct component IDs:",i.components));if(console.log("📋 Final component IDs to fetch:",o),!o||o.length===0){console.log("ℹ️ No components configured for seller:",e.sellerFlavor);return}const n=yield this.templateRepository.listComponents(o,e.sellerFlavor);console.log("🧩 Components retrieved:",n);const r=n.filter(i=>i.enabled);if(console.log(`🔧 Found ${r.length} enabled components out of ${n.length} total`),r.length===0){console.log("ℹ️ No enabled components found");return}for(const i of r)yield this.renderComponent(i,e.browserId,e.customerDocument,e.sellerFlavor);console.log("✅ All enabled components processed successfully")})}renderComponent(e,t,o,n){return a(this,null,function*(){var d,p,O,N;console.log(`🔨 Rendering component: ${e.name} (ID: ${e.id})`);const r={title:((d=e.props)==null?void 0:d.title)||"Produtos Recomendados",maxItems:((p=e.props)==null?void 0:p.maxItems)||12,excludeViewed:((O=e.props)==null?void 0:O.excludeViewed)||!1,containerPosition:((N=e.props)==null?void 0:N.containerPosition)||s.APPEND,targetSelectors:e.injectLocation?[e.injectLocation]:["#shelf-target"]},i=this.domRepository.createLoadingElement();if(!this.domRepository.insertElement(i,r))throw console.error("❌ Failed to insert loading element into DOM"),new Error("Failed to insert loading element into DOM");try{const u=yield this.recommendationApiRepository.getRecommendations({maxItems:r.maxItems,excludeViewed:r.excludeViewed,browserId:t,customerDocument:o,recommendationType:e.recommendationType},e.sellerFlavor);if(u.length===0){console.warn("No products found for component, removing loading element"),i.remove();return}const v=yield this.templateRepository.getTemplate(e.templateId,n),F=new P({title:r.title,products:u,configuration:r},v).renderShelfHtml(),D=this.domRepository.createElement(F);i.replaceWith(D),this.initializeSlider(D),console.log(`✅ Component ${e.name} rendered successfully`)}catch(u){console.error(`❌ Error rendering component ${e.name}:`,u);const v=this.domRepository.createErrorElement(u instanceof Error?u.message:"Unknown error");throw i.replaceWith(v),u}})}renderShelf(e){return a(this,null,function*(){console.log("🛍️ Starting shelf rendering:",e.configuration);const t=this.domRepository.createLoadingElement();if(!this.domRepository.insertElement(t,e.configuration))throw console.error("❌ Failed to insert shelf into DOM"),new Error("Failed to insert shelf into DOM");try{const n=yield this.recommendationApiRepository.getRecommendations({maxItems:e.configuration.maxItems,excludeViewed:e.configuration.excludeViewed,browserId:e.browserId,customerDocument:e.customerDocument,recommendationType:e.recommendationType},e.sellerFlavor);if(n.length===0){console.warn("No products found, removing loading element"),t.remove();return}const r=yield this.templateRepository.getTemplateLegacy(e.sellerFlavor,e.templateName),c=new P({title:e.configuration.title,products:n,configuration:e.configuration},r).renderShelfHtml(),d=this.domRepository.createElement(c);t.replaceWith(d),this.initializeSlider(d),console.log("✅ Shelf rendered successfully")}catch(n){console.error("❌ Error rendering shelf:",n);const r=this.domRepository.createErrorElement(n instanceof Error?n.message:"Unknown error");throw t.replaceWith(r),n}})}validateRenderRequest(e){if(!e.sellerFlavor)throw new Error("Seller flavor is required");if(!e.templateName)throw new Error("Template name is required");if(!e.configuration)throw new Error("Configuration is required");if(!e.configuration.title)throw new Error("Configuration title is required")}initializeSlider(e){console.log("🎠 Initializing Swiffy Slider..."),console.log("🔍 Shelf element:",e),console.log("🔍 Shelf element innerHTML preview:",e.innerHTML.substring(0,200)+"...");const t=e.querySelector(".swiffy-slider");if(console.log("🔍 Found slider element:",!!t),!t){console.warn("⚠️ No slider element found in shelf"),console.log('🔍 Looking for elements with classes containing "swiffy":',Array.from(e.querySelectorAll("*")).filter(o=>o.className&&o.className.includes&&o.className.includes("swiffy")));return}console.log("🔍 Slider element classes:",t.className),console.log("🔍 Slider element children count:",t.children.length),typeof window.swiffyslider=="undefined"?(console.log("📦 Loading Swiffy Slider library..."),this.loadSwiffySlider().then(()=>{console.log("✅ Swiffy Slider library loaded, initializing..."),this.initSlider(t)}).catch(o=>{console.error("❌ Failed to load Swiffy Slider:",o)})):(console.log("✅ Swiffy Slider library already available, initializing..."),this.initSlider(t))}loadSwiffySlider(){return new Promise((e,t)=>{const o=document.createElement("link");o.rel="stylesheet",o.href="https://cdn.jsdelivr.net/npm/swiffy-slider@1.6.0/dist/css/swiffy-slider.min.css",document.head.appendChild(o);const n=document.createElement("script");n.src="https://cdn.jsdelivr.net/npm/swiffy-slider@1.6.0/dist/js/swiffy-slider.min.js",n.onload=()=>e(),n.onerror=()=>t(new Error("Failed to load Swiffy Slider script")),document.head.appendChild(n)})}initSlider(e){const t=window.swiffyslider;if(console.log("🔍 Swiffy Slider library status:",{available:!!t,type:typeof t,methods:t?Object.keys(t):"N/A"}),e&&t){console.log("✅ Initializing Swiffy Slider on element..."),console.log("🔍 Element before init:",e.outerHTML.substring(0,300)+"...");try{t.init(e),console.log("✅ Swiffy Slider initialized successfully"),console.log("🔍 Element after init:",e.outerHTML.substring(0,300)+"...");const o=e.querySelectorAll(".slider-nav");console.log("🔍 Navigation buttons found:",o.length),o.forEach((n,r)=>{console.log(`🔍 Nav button ${r}:`,{classList:Array.from(n.classList),hasClickListener:!!n.onclick,tagName:n.tagName})})}catch(o){console.error("❌ Error during Swiffy Slider initialization:",o)}}else console.error("❌ Swiffy Slider element or library not found",{element:!!e,library:!!t})}}class b{constructor(e){this.config=e}get(e,t){return a(this,null,function*(){console.log("🌐 [HTTP] ============================================"),console.log("🚀 [HTTP] Making GET request"),console.log("📡 [HTTP] URL:",this.config.apiUrl+e),console.log("🔑 [HTTP] Headers:",this.getLoggableHeaders(t)),console.log("⏰ [HTTP] Request Time:",new Date().toISOString());const o=performance.now(),n=yield this.makeRequest("GET",e,void 0,t),r=performance.now();return console.log("✅ [HTTP] GET request completed"),console.log("⏱️ [HTTP] Response Time:",`${(r-o).toFixed(2)}ms`),console.log("📊 [HTTP] Status:",n.status,n.statusText),console.log("🌐 [HTTP] ============================================"),n.json()})}post(e,t,o){return a(this,null,function*(){console.log("🌐 [HTTP] ============================================"),console.log("🚀 [HTTP] Making POST request"),console.log("📡 [HTTP] URL:",this.config.apiUrl+e),console.log("🔑 [HTTP] Headers:",this.getLoggableHeaders(o)),console.log("📤 [HTTP] Request Body:",JSON.stringify(t,null,2)),console.log("⏰ [HTTP] Request Time:",new Date().toISOString());const n=performance.now(),r=yield this.makeRequest("POST",e,t,o),i=performance.now();return console.log("✅ [HTTP] POST request completed"),console.log("⏱️ [HTTP] Response Time:",`${(i-n).toFixed(2)}ms`),console.log("📊 [HTTP] Status:",r.status,r.statusText),console.log("🌐 [HTTP] ============================================"),r.json()})}makeRequest(e,t,o,n){return a(this,null,function*(){const r=T(T({"Content-Type":"application/json"},this.getDefaultHeaders()),n==null?void 0:n.headers),i={method:e,headers:r};if(o&&(e==="POST"||e==="PUT"||e==="PATCH")&&(i.body=JSON.stringify(o)),this.config.timeout){const p=new AbortController;i.signal=p.signal,setTimeout(()=>p.abort(),this.config.timeout)}const c=this.config.apiUrl+t,d=yield fetch(c,i);if(!d.ok)throw new Error(`HTTP Error ${d.status}: ${d.statusText}`);return d})}getDefaultHeaders(){const e={};return this.config.apiKey&&(e["x-api-key"]=this.config.apiKey),e}getBaseUrl(){return this.config.apiUrl}getLoggableHeaders(e){const t=T(T({},this.getDefaultHeaders()),e==null?void 0:e.headers),o={};for(const[n,r]of Object.entries(t))n.toLowerCase().includes("authorization")||n.toLowerCase().includes("key")?o[n]="***REDACTED***":o[n]=r;return o}}class w{constructor(e){this.config=e,this.initializeHttpServices(),this.initializeRepositories(),this.initializeServices()}static getInstance(e){if(!w.instance){if(!e)throw new Error("Container must be initialized with config");w.instance=new w(e)}return w.instance}initializeHttpServices(){this.recommendationsHttpService=new b({apiUrl:this.config.recommendationsApiUrl||this.config.apiUrl,apiKey:this.config.recommendationsApiKey||this.config.apiKey,timeout:this.config.timeout}),this.injectorHttpService=new b({apiUrl:this.config.injectorApiUrl||this.config.apiUrl,apiKey:this.config.injectorApiKey||this.config.apiKey,timeout:this.config.timeout})}initializeRepositories(){this.recommendationsRepository=new _(this.recommendationsHttpService),this.injectorRepository=new h(this.injectorHttpService),this.domAdapter=new C,this.storageService=new E}initializeServices(){this.injectorApiService=new L(this.injectorRepository,this.domAdapter,this.recommendationsRepository)}getInjectorApiService(){return this.injectorApiService}getStorageService(){return this.storageService}getRecommendationsRepository(){return this.recommendationsRepository}getInjectorRepository(){return this.injectorRepository}getDomAdapter(){return this.domAdapter}replaceDependency(e,t){this[e]=t}}class A{static load(){const e={VITE_DEBUG_MODE:"false",VITE_RECOMMENDATIONS_API_TIMEOUT:"10000",VITE_DEFAULT_SHELF_TITLE:"Produtos Recomendados",VITE_DEFAULT_MAX_ITEMS:"12",VITE_SWIFFY_SLIDER_JS_URL:"https://cdn.jsdelivr.net/npm/swiffy-slider@1.6.0/dist/js/swiffy-slider.min.js",VITE_SWIFFY_SLIDER_CSS_URL:"https://cdn.jsdelivr.net/npm/swiffy-slider@1.6.0/dist/css/swiffy-slider.min.css",VITE_RECOMMENDATIONS_API_URL:"https://gol0qozv97.execute-api.us-east-1.amazonaws.com/qa",VITE_RECOMMENDATIONS_API_KEY:"8QD7vDvrOn1D6goXfc5xg7p7OYNc71Tr7YI59xaI",VITE_INJECTOR_API_URL:"https://ah3qg6m5mi.execute-api.us-east-1.amazonaws.com/qa",VITE_INJECTOR_API_KEY:"JyDAREDeom6gKVwAhUy5f9zmHEHCz0N5Q6mEVBmc",BASE_URL:"/",MODE:"production",DEV:!1,PROD:!0,SSR:!1,RECOMMENDATIONS_API_URL:"",RECOMMENDATIONS_API_KEY:"",RECOMMENDATIONS_API_TIMEOUT:"10000",DEFAULT_SHELF_TITLE:"Produtos Recomendados",DEFAULT_MAX_ITEMS:"12",SWIFFY_SLIDER_JS_URL:"https://cdn.jsdelivr.net/npm/swiffy-slider@1.6.0/dist/js/swiffy-slider.min.js",SWIFFY_SLIDER_CSS_URL:"https://cdn.jsdelivr.net/npm/swiffy-slider@1.6.0/dist/css/swiffy-slider.min.css",DEBUG_MODE:"false"};console.log("ENV Debug:",e),console.log("VITE vars:",Object.keys(e).filter(i=>i.startsWith("VITE_")));const t=e.VITE_INJECTOR_API_URL,o=e.VITE_INJECTOR_API_KEY,n=e.VITE_RECOMMENDATIONS_API_URL,r=e.VITE_RECOMMENDATIONS_API_KEY;return console.log("Config:",{injectorApiUrl:t,injectorApiKey:"SET",recommendationsApiUrl:n,recommendationsApiKey:"SET"}),{apiUrl:n,apiKey:r,apiTimeout:parseInt(e.VITE_RECOMMENDATIONS_API_TIMEOUT,10),recommendationsApiUrl:n,recommendationsApiKey:r,injectorApiUrl:t,injectorApiKey:o,defaultShelfTitle:e.VITE_DEFAULT_SHELF_TITLE,defaultMaxItems:parseInt(e.VITE_DEFAULT_MAX_ITEMS,10),swiffySliderJsUrl:e.VITE_SWIFFY_SLIDER_JS_URL,swiffySliderCssUrl:e.VITE_SWIFFY_SLIDER_CSS_URL,debugMode:e.VITE_DEBUG_MODE==="true"}}static validate(e){const t=["apiUrl","apiKey"];for(const o of t)if(!e[o])throw new Error(`Missing required environment variable: ${o}`);if(e.apiTimeout<=0)throw new Error("API timeout must be greater than 0");if(e.defaultMaxItems<=0)throw new Error("Default max items must be greater than 0")}}class M{constructor(){try{this.window=window,console.log("🔧 Loading environment configuration...");const e=A.load();console.log("🔧 Environment config loaded:",{hasApiUrl:!!e.apiUrl,apiUrl:e.apiUrl,hasApiKey:!!e.apiKey,hasInjectorApiUrl:!!e.injectorApiUrl,injectorApiUrl:e.injectorApiUrl,hasInjectorApiKey:!!e.injectorApiKey,timeout:e.apiTimeout,recommendationsApiUrl:e.recommendationsApiUrl,recommendationsApiKey:e.recommendationsApiKey?"SET":"NOT_SET"}),A.validate(e),console.log("✅ Environment configuration validated");const t={apiUrl:e.apiUrl,apiKey:e.apiKey,timeout:e.apiTimeout,recommendationsApiUrl:e.recommendationsApiUrl,recommendationsApiKey:e.recommendationsApiKey,injectorApiUrl:e.injectorApiUrl,injectorApiKey:e.injectorApiKey};console.log("🔧 Initializing dependency container..."),this.container=w.getInstance(t),this.injectorService=this.container.getInjectorApiService(),this.storageService=this.container.getStorageService(),console.log("✅ Services initialized successfully")}catch(e){throw console.error("❌ Failed to initialize GTMLoader constructor:",e),e}}initialize(){try{if(console.log("🚀 Initializing ComponentInjector with Clean Architecture..."),this.window.ComponentInjector){console.log("⚠️ ComponentInjector already exists");return}console.log("🔧 Creating ComponentInjector on window object..."),this.window.ComponentInjector={load:()=>this.load()},console.log("🔧 Setting up global functions..."),this.setupGlobalFunctions(),console.log("✅ ComponentInjector created successfully"),this.window.ComponentInjector&&typeof this.window.ComponentInjector.load=="function"?console.log("✅ ComponentInjector.load method is available"):console.error("❌ ComponentInjector.load method is not available after creation")}catch(e){throw console.error("❌ Failed to initialize ComponentInjector:",e),e}}loadComponents(e,t,o,n){return a(this,null,function*(){console.log("🔍 loadComponents called with:",{containerId:e,sellerFlavor:t,templateName:o,recommendationType:n}),e?(console.log(`📦 Loading recommendations into container: ${e}`),yield this.loadRecommendations(e,t,o,n)):(console.log("📦 Loading components from window configuration..."),console.log("🔍 About to call this.load()..."),this.load(),console.log("✅ this.load() completed"))})}loadRecommendations(e,t,o,n){return a(this,null,function*(){console.log(`📦 Loading recommendations into container: ${e}`,{sellerFlavor:t,templateName:o,recommendationType:n});const i={clientId:"gtm-loader",components:[{id:"recommendations",type:"shelf",selector:e.startsWith("#")?e:`#${e}`,enabled:!0,props:{sellerFlavor:t,templateName:o,containerPosition:s.APPEND,maxItems:10,excludeViewed:!1,title:"Recommended Products"}}]};yield this.initializeComponents(i)})}load(){if(console.log("📦 Loading components..."),console.log("🔍 Checking for window.componentInjectorConfig..."),console.log("🔍 window.componentInjectorConfig exists:",!!this.window.componentInjectorConfig),this.window.componentInjectorConfig&&console.log("🔍 Found config:",this.window.componentInjectorConfig),!this.window.componentInjectorConfig)throw new Error("Configuration `componentInjectorConfig` not found on window.");if(!this.window.componentInjectorConfig.clientId)throw new Error("clientId is required for database-driven component loading");console.log("🗄️ Using database-driven component loading for clientId:",this.window.componentInjectorConfig.clientId),this.loadComponentsFromDatabase(this.window.componentInjectorConfig.clientId)}loadComponentsFromDatabase(e){return a(this,null,function*(){console.log("🗄️ Loading components from database for seller:",e),(!e||e==="test-client-001"||e==="gtm-loader")&&(e="limppano",console.log("🔄 [GTM-LOADER] Using test seller:",e));const t=this.storageService.getBrowserId(),o=this.storageService.getCustomerDocument();console.log("🔍 [GTM-LOADER] Database loading parameters:",{sellerFlavor:e,browserId:t?t.substring(0,8)+"...":"null",customerDocument:o?o.substring(0,8)+"...":"null"}),yield this.injectorService.renderShelvesForSeller({sellerFlavor:e,browserId:t,customerDocument:o}),console.log("✅ Database-driven component loading completed successfully")})}initializeComponents(e){return a(this,null,function*(){if(console.log("🎯 Initializing components..."),!e||!e.components)throw new Error("Invalid configuration: components array missing");const t=e.components.filter(o=>o.enabled);if(t.length===0){console.log("ℹ️ No enabled components found");return}console.log(`🔧 Found ${t.length} enabled components`);for(const o of t)yield this.processComponent(o)})}processComponent(e){return a(this,null,function*(){if(console.log(`🔨 Processing component: ${e.id} (${e.type})`),e.type==="shelf")yield this.initializeShelf(e);else throw new Error(`Unknown component type: ${e.type}`)})}initializeShelf(e){return a(this,null,function*(){const t=e.props,o=A.load(),n={title:t.title||o.defaultShelfTitle,maxItems:t.maxItems||o.defaultMaxItems,excludeViewed:t.excludeViewed||!1,containerPosition:t.containerPosition||s.APPEND,targetSelectors:t.targetSelectors||[e.selector]},r=this.storageService.getBrowserId(),i=this.storageService.getCustomerDocument(),c=t.sellerFlavor||"limppano",d=t.templateName||"default",p=t.recommendationType||"popular";console.log("🔍 [GTM-LOADER] Using seller configuration:",{sellerFlavor:c,templateName:d,recommendationType:p,fromProps:!!t.sellerFlavor}),yield this.injectorService.renderShelf({sellerFlavor:c,templateName:d,recommendationType:p,configuration:n,browserId:r,customerDocument:i}),console.log(`✅ Shelf component ${e.id} initialized successfully`)})}setupGlobalFunctions(){const e=this.window;e.spotAddToCartButtonClick||(e.spotAddToCartButtonClick=t=>{console.log("🛒 Add to cart clicked:",t)}),e.wishlistAddClick||(e.wishlistAddClick=(t,o)=>{console.log("❤️ Wishlist clicked:",o)}),e.spotBuyButtonClick||(e.spotBuyButtonClick=t=>{console.log("💳 Buy button clicked:",t)})}}(function(){console.log("🚀 Starting ComponentInjector with Clean Architecture...");const l=new M;l.initialize();const e={load:(t,o,n,r)=>{console.log("🎯 ComponentInjector.load called:",{containerId:t,sellerFlavor:o,templateName:n,recommendationType:r}),console.log("🔍 About to call gtmLoader.loadComponents...");const i=l.loadComponents(t,o,n,r);return console.log("✅ gtmLoader.loadComponents completed, result:",i),i}};window.ComponentInjector=e,console.log("✅ GTM Loader initialized successfully"),console.log("✅ ComponentInjector created with load method"),console.log("✅ ComponentInjector attached to window object"),console.log("🔍 ComponentInjector structure:",e),console.log("🔍 window.ComponentInjector keys:",Object.keys(window.ComponentInjector)),window.ComponentInjector&&typeof window.ComponentInjector.load=="function"?console.log("✅ ComponentInjector.load method is available and callable"):console.error("❌ ComponentInjector.load method is not available")})()})();
